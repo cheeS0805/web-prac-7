@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тема 2 — jQuery Селектори</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background: #f9f9f9; }
+        h1 { color: #1a237e; }
+        h2 { color: #283593; border-left: 4px solid #3949ab; padding-left: 10px; }
+        h3 { color: #37474f; margin-top: 16px; }
+        .section { background: white; border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .info { background: #e3f2fd; border-left: 3px solid #1976d2; padding: 8px 12px; margin: 8px 0; border-radius: 0 5px 5px 0; font-size: 14px; }
+        code { background: #263238; color: #80cbc4; padding: 2px 7px; border-radius: 3px; font-family: monospace; font-size: 13px; }
+        pre { background: #263238; color: #f8f8f2; padding: 14px; border-radius: 6px; font-size: 13px; line-height: 1.6; overflow-x: auto; }
+        input[type=button], input[type=text], input[type=submit] { padding: 6px 12px; margin: 4px; border: 1px solid #ccc; border-radius: 4px; }
+
+        /* ===== Завдання 1: початкові стилі ===== */
+        #meadow, .rainbow, #fut, #future, [set], [last="code"] { margin: 6px 0; padding: 6px; border: 1px solid #eee; border-radius: 4px; }
+
+        /* ===== Завдання 2: початкові стилі ===== */
+        #task2-area p, #task2-area h3 { margin: 5px 0; padding: 6px 10px; border: 1px solid #e0e0e0; border-radius: 4px; }
+        #task2-area input { display: block; margin: 5px 0; }
+        #wrap1 { border: 1px dashed #aaa; padding: 6px 10px; margin: 5px 0; border-radius: 4px; }
+        #task2-area img { margin: 4px; vertical-align: top; }
+    </style>
+</head>
+<body>
+    <h1>Тема 2. Селектори jQuery</h1>
+
+    <!-- ===== noConflict() ===== -->
+    <div class="section">
+        <h2>Функція noConflict()</h2>
+        <p>Деякі бібліотеки JavaScript також використовують символ <code>$</code>. Щоб уникнути конфліктів, існує функція <code>noConflict()</code> — вона звільняє символ <code>$</code> і дозволяє використовувати інше ім'я для jQuery.</p>
+        <pre>var jq = $.noConflict();
+jq(document).ready(function () {
+    jq('p').css('color', 'blue');
+});</pre>
+        <div class="info" id="noConflictResult">Результат noConflict() буде тут</div>
+    </div>
+
+    <!-- ===== Ланцюжки команд ===== -->
+    <div class="section">
+        <h2>Ланцюжки команд (Method Chaining)</h2>
+        <p>Команди в ланцюжку виконуються по черзі зліва направо — це дозволяє скорочувати розмір коду:</p>
+        <pre>$('#chainDemo')
+    .css('color', 'white')
+    .css('background', '#1976d2')
+    .text('Стилі змінено ланцюжком!')
+    .animate({ opacity: 0.7 }, 500);</pre>
+        <p id="chainDemo" style="padding:10px;border:1px solid #ccc;border-radius:4px;display:inline-block;">Цей абзац буде змінено ланцюжком методів</p>
+    </div>
+
+    <!-- ===== Завдання 1 ===== -->
+    <div class="section">
+        <h2>Завдання 1 — Зміна стилів через різні типи селекторів</h2>
+        <p>Підключити jQuery до сторінки та змінити стилі елементів за допомогою відповідних селекторів (Рис. 2.8).</p>
+
+        <!-- HTML-лістинг для завдання 1 (Рис. 2.8) -->
+        <p id="meadow">Елемент з id="meadow"</p>
+
+        <p class="rainbow">Елемент з class="rainbow" (перший)</p>
+        <p class="rainbow">Елемент з class="rainbow" (другий)</p>
+
+        <div id="fut">
+            <p id="future">Елемент з id="future" всередині id="fut"</p>
+            <p>Звичайний абзац всередині id="fut" — не змінюється</p>
+        </div>
+
+        <p set="yes">Елемент з атрибутом <code>set="yes"</code></p>
+
+        <p last="code">Елемент з атрибутом <code>last="code"</code></p>
+    </div>
+
+    <!-- ===== Завдання 2 ===== -->
+    <div class="section">
+        <h2>Завдання 2 — Змініть оформлення елементів відповідно до їх вмісту</h2>
+        <p><b>Кожне завдання зазначене цифрою повинно бути виконано за допомогою однієї jQuery команди.</b></p>
+
+        <div id="task2-area">
+            <!-- 1: #pmtog → зелений -->
+            <p id="pmtog">Пофарбуйте мене в зелений колір. <small>(1. #pmtog)</small></p>
+
+            <!-- НЕ змінюється — h3.pr1 -->
+            <h3 class="pr1">Мій колір не повинен бути змінений. <small>(h3.pr1)</small></h3>
+
+            <!-- 2: p.pr1 → червоний (але не h3.pr1!) -->
+            <p class="pr1">Пофарбуйте мене в червоний колір. <small>(2. p.pr1)</small></p>
+
+            <!-- 3: input[type="button"] → помаранчевий -->
+            <input type="button"  value="Пофарбуйте мене в помаранчевий (3)">
+
+            <!-- НЕ змінюється -->
+            <input type="text"   value="Мій колір не повинен бути змінений">
+            <input type="submit" value="Мій колір змінювати не потрібно">
+
+            <!-- 4: .pmb1 → синій -->
+            <p class="pmb1">Пофарбуйте мене в синій. <small>(4. .pmb1)</small></p>
+            <p>Мій колір не повинен бути змінений.</p>
+            <p>Мій колір не повинен бути змінений.</p>
+
+            <!-- 5: .pmb2 → синій -->
+            <p class="pmb2">Пофарбуйте мене в синій. <small>(5. .pmb2)</small></p>
+            <p>Мій колір не повинен бути змінений.</p>
+
+            <!-- .pmb3 → синій -->
+            <p class="pmb3">Пофарбуйте мене в синій. <small>(.pmb3)</small></p>
+
+            <!-- #wrap1: pmtobr всередині → коричневий; pmtobr зовні — НЕ змінюється -->
+            <div id="wrap1">
+                <p>Мій колір не повинен бути змінений.</p>
+                <p class="pmtobr">Пофарбуйте мене в коричневий. <small>(#wrap1 .pmtobr)</small></p>
+            </div>
+            <p class="pmtobr">Мій колір не повинен бути змінений. <small>(.pmtobr поза #wrap1)</small></p>
+
+            <!-- 6: рамка навколо третього (зліва) зображення -->
+            <p><b>6. Відкрийте рамку навколо третього (зліва) зображення. (css("borderStyle","solid"))</b></p>
+            <img src="https://placehold.co/200x130/4caf50/fff?text=Mountain+3" style="width: 200px; height: 130px;">
+            <img src="https://placehold.co/200x130/2196f3/fff?text=Mountain+1" style="width: 200px; height: 130px;">
+            <img src="https://placehold.co/200x130/ff9800/fff?text=Mountain+2" style="width: 200px; height: 130px;">
+
+            <!-- 7: #iwrap — button і submit → червоний, text — НЕ змінюється -->
+            <div id="iwrap">
+                <input type="button"  value="Пофарбуйте мене в червоний (7)">
+                <input type="text"    value="Мій колір не повинен бути змінений">
+                <input type="submit"  value="Пофарбуйте мене в червоний (7)">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+
+            // ===== noConflict() =====
+            // noConflict() звільняє $ — щоб не зламати решту коду,
+            // зберігаємо посилання через jQuery напряму без виклику noConflict
+            var jq = jQuery;
+            $('#noConflictResult').text(
+                'Демонстрація: jq = jQuery v' + jq.fn.jquery +
+                '. Аналог var jq = $.noConflict() — тепер jq("p") = $("p")'
+            ).css('color', '#1565c0');
+
+
+            // ===== Ланцюжок методів =====
+            $('#chainDemo')
+                .css('color', 'white')
+                .css('background', '#1976d2')
+                .css('padding', '12px')
+                .css('border-radius', '5px')
+                .text('Стилі змінено одним ланцюжком jQuery!');
+
+
+            // ===== Завдання 1: селектори =====
+
+            // а) Селектор по id — #meadow
+            $('#meadow').css({ 'color': 'green', 'font-size': '20px', 'font-weight': 'bold' });
+
+            // б) Селектор по класу — .rainbow
+            $('.rainbow').css({ 'color': 'purple', 'font-size': '18px', 'background': '#fce4ec' });
+
+            // в) Дочірній селектор — #future всередині #fut
+            $('#fut #future').css({ 'color': 'orange', 'font-size': '20px', 'background': '#fff3e0' });
+
+            // г) Селектор наявності атрибута — [set]
+            $('[set]').css({ 'color': 'blue', 'font-style': 'italic', 'font-size': '18px' });
+
+            // д) Селектор значення атрибута — [last="code"]
+            $('[last="code"]').css({ 'color': 'red', 'font-size': '20px', 'text-decoration': 'underline' });
+
+
+            // ===== Завдання 2: кожна команда — ОДИН рядок jQuery =====
+
+            // 1. #pmtog → зелений (селектор по id)
+            $('#pmtog').css('color', 'green');
+
+            // 2. p.pr1 → червоний (НЕ h3.pr1!)
+            $('p.pr1').css('color', 'red');
+
+            // 3. input[type="button"] → помаранчевий фон
+            $('input[type="button"]').css('background-color', 'orange');
+
+            // 4. .pmb1 → синій
+            $('.pmb1').css('color', 'blue');
+
+            // 5. .pmb2 → синій
+            $('.pmb2').css('color', 'blue');
+
+            // .pmb3 → синій
+            $('.pmb3').css('color', 'blue');
+
+            // #wrap1 .pmtobr → коричневий (лише всередині #wrap1!)
+            $('#wrap1 .pmtobr').css('color', 'brown');
+
+            // 6. Рамка навколо третього зображення (:eq(2) = третє зліва)
+            $('img:eq(2)').css('borderStyle', 'solid');
+
+            // 7. #iwrap: button і submit → червоний (text — не змінюється)
+            $('#iwrap input[type="button"], #iwrap input[type="submit"]').css('color', 'red');
+
+        });
+    </script>
+</body>
+</html>

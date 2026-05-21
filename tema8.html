@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тема 8 — Анімація в jQuery</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background: #f9f9f9; }
+        h1  { color: #1a237e; }
+        h2  { color: #283593; border-left: 4px solid #3949ab; padding-left: 10px; }
+        h3  { color: #37474f; margin-top: 16px; }
+
+        .section {
+            background: white; border: 1px solid #e0e0e0; padding: 20px;
+            margin: 20px 0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .info {
+            background: #e3f2fd; border-left: 3px solid #1976d2;
+            padding: 8px 12px; margin: 8px 0; border-radius: 0 5px 5px 0; font-size: 14px;
+        }
+        code {
+            background: #263238; color: #80cbc4; padding: 2px 7px;
+            border-radius: 3px; font-family: monospace; font-size: 13px;
+        }
+        pre {
+            background: #263238; color: #f8f8f2; padding: 14px;
+            border-radius: 6px; font-size: 13px; line-height: 1.6;
+            overflow-x: auto; margin: 10px 0;
+        }
+
+        .table-wrap { overflow-x: auto; margin: 10px 0; }
+        table { border-collapse: collapse; width: 100%; }
+        th { background: #1565c0; color: #fff; padding: 9px 13px; text-align: left; }
+        td { padding: 8px 13px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+        tr:nth-child(even) td { background: #f5f5f5; }
+
+        button {
+            background: #1565c0; color: white; border: none;
+            padding: 8px 18px; border-radius: 4px; cursor: pointer;
+            font-size: 14px; margin: 4px 4px 4px 0;
+        }
+        button:hover { background: #0d47a1; }
+
+        #par1, #par2 {
+            background: #fff3e0; border: 1px solid #ffb300;
+            padding: 14px 18px; border-radius: 6px;
+            line-height: 1.8; color: #333; margin: 10px 0;
+        }
+        #par2 { background: #e8f5e9; border-color: #66bb6a; cursor: default; }
+
+        #wrap1 {
+            display: block;
+            background: #e3f2fd; border: 1px solid #42a5f5;
+            padding: 14px 18px; border-radius: 6px;
+            line-height: 1.8; color: #333; margin: 10px 0;
+            overflow: hidden;
+        }
+
+        #animArea {
+            position: relative; width: 100%; height: 120px;
+            background: #fafafa; border: 1px solid #e0e0e0;
+            border-radius: 6px; margin: 10px 0; overflow: hidden;
+        }
+        .black-sq {
+            position: absolute; width: 50px; height: 50px;
+            background: #212121; border-radius: 4px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 18px; font-weight: bold;
+            top: 35px;
+        }
+        #redSq {
+            position: absolute; width: 50px; height: 50px;
+            background: #e53935; border-radius: 4px;
+            top: 35px; left: 0; z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Тема 8. Анімація в jQuery</h1>
+
+<!-- ===== ТЕОРІЯ ===== -->
+<div class="section">
+    <h2>Теорія — Методи показу та приховування</h2>
+
+    <p>Для показу та приховування елементів jQuery надає методи <code>.hide()</code>, <code>.show()</code> та <code>.toggle()</code>.</p>
+
+    <div class="table-wrap">
+        <table>
+            <tr>
+                <th>Метод</th>
+                <th>Синтаксис</th>
+                <th>Опис</th>
+            </tr>
+            <tr>
+                <td><strong>.hide()</strong></td>
+                <td><code>$(selector).hide([duration] [, easing] [, callback])</code></td>
+                <td>Приховує вибрані елементи (встановлює <code>display:none</code>). Без параметрів — миттєво.</td>
+            </tr>
+            <tr>
+                <td><strong>.show()</strong></td>
+                <td><code>$(selector).show([duration] [, easing] [, callback])</code></td>
+                <td>Показує приховані елементи. Без параметрів — миттєво.</td>
+            </tr>
+            <tr>
+                <td><strong>.toggle()</strong></td>
+                <td><code>$(selector).toggle([duration] [, easing] [, callback])</code></td>
+                <td>Перемикає між показом та прихованням елементів.</td>
+            </tr>
+        </table>
+    </div>
+
+    <h3>Параметри .hide() / .show() / .toggle():</h3>
+    <div class="table-wrap">
+        <table>
+            <tr><th>Параметр</th><th>Тип</th><th>Значення за замовчуванням</th><th>Опис</th></tr>
+            <tr>
+                <td><strong>duration</strong></td>
+                <td>Number або String</td>
+                <td>400</td>
+                <td>Тривалість анімації (мс). Рядки: <code>"fast"</code> = 200 мс, <code>"slow"</code> = 600 мс.</td>
+            </tr>
+            <tr>
+                <td><strong>easing</strong></td>
+                <td>String</td>
+                <td><code>"swing"</code></td>
+                <td>Функція плавності. <code>"swing"</code> — повільніше на початку та в кінці, швидше в середині. <code>"linear"</code> — рівномірна швидкість.</td>
+            </tr>
+            <tr>
+                <td><strong>callback</strong></td>
+                <td>Function</td>
+                <td>—</td>
+                <td>Функція, що викликається після завершення анімації.</td>
+            </tr>
+        </table>
+    </div>
+
+    <h3>Приклад:</h3>
+    <pre>$('#myDiv').hide(1000);              // приховати за 1 секунду
+$('#myDiv').show('slow');             // показати повільно (600 мс)
+$('#myDiv').toggle('fast', function() {
+    console.log('Анімація завершена');
+});</pre>
+</div>
+
+<div class="section">
+    <h2>Теорія — Методи зміни прозорості (fade)</h2>
+
+    <div class="table-wrap">
+        <table>
+            <tr>
+                <th>Метод</th>
+                <th>Синтаксис</th>
+                <th>Опис</th>
+            </tr>
+            <tr>
+                <td><strong>.fadeIn()</strong></td>
+                <td><code>$(sel).fadeIn([duration] [, easing] [, callback])</code></td>
+                <td>Плавно збільшує прозорість до видимого стану (opacity: 0 → 1). Встановлює <code>display:block</code> на початку.</td>
+            </tr>
+            <tr>
+                <td><strong>.fadeOut()</strong></td>
+                <td><code>$(sel).fadeOut([duration] [, easing] [, callback])</code></td>
+                <td>Плавно зменшує прозорість до прихованого (opacity: 1 → 0). Після завершення встановлює <code>display:none</code>.</td>
+            </tr>
+            <tr>
+                <td><strong>.fadeTo()</strong></td>
+                <td><code>$(sel).fadeTo(duration, opacity [, easing] [, callback])</code></td>
+                <td>Плавно змінює прозорість до необхідного рівня. На відміну від <code>fadeOut</code> <strong>не приховує</strong> елемент після завершення.</td>
+            </tr>
+            <tr>
+                <td><strong>.fadeToggle()</strong></td>
+                <td><code>$(sel).fadeToggle([duration] [, easing] [, callback])</code></td>
+                <td>Перемикає між <code>fadeIn</code> та <code>fadeOut</code>.</td>
+            </tr>
+        </table>
+    </div>
+
+    <h3>Параметри .fadeTo():</h3>
+    <div class="table-wrap">
+        <table>
+            <tr><th>Параметр</th><th>Тип</th><th>Обов'язковий</th><th>Опис</th></tr>
+            <tr>
+                <td><strong>duration</strong></td>
+                <td>Number або String</td>
+                <td>Так</td>
+                <td>Тривалість анімації в мілісекундах або <code>"fast"</code> / <code>"slow"</code>.</td>
+            </tr>
+            <tr>
+                <td><strong>opacity</strong></td>
+                <td>Number</td>
+                <td>Так</td>
+                <td>Цільове значення прозорості від 0 (повністю прозорий) до 1 (повністю непрозорий).</td>
+            </tr>
+            <tr>
+                <td><strong>easing</strong></td>
+                <td>String</td>
+                <td>Ні</td>
+                <td>Функція плавності: <code>"swing"</code> або <code>"linear"</code>.</td>
+            </tr>
+            <tr>
+                <td><strong>callback</strong></td>
+                <td>Function</td>
+                <td>Ні</td>
+                <td>Функція зворотного виклику після завершення анімації.</td>
+            </tr>
+        </table>
+    </div>
+
+    <h3>Приклад:</h3>
+    <pre>$('#myDiv').fadeOut(500);            // сховати за 0.5 с
+$('#myDiv').fadeIn('slow');           // показати повільно
+$('#myDiv').fadeTo(2000, 0.3);        // знизити прозорість до 30% за 2 с</pre>
+</div>
+
+<div class="section">
+    <h2>Теорія — Метод .animate()</h2>
+
+    <p>Метод <code>.animate()</code> є найбільш гнучким методом анімації jQuery. Він дозволяє анімувати будь-яке числове CSS-властивість.</p>
+
+    <h3>Синтаксис:</h3>
+    <pre>$(selector).animate(properties [, duration] [, easing] [, callback]);
+// або через об'єкт опцій:
+$(selector).animate(properties, options);</pre>
+
+    <h3>Параметри .animate():</h3>
+    <div class="table-wrap">
+        <table>
+            <tr><th>Параметр</th><th>Тип</th><th>Значення за замовч.</th><th>Опис</th></tr>
+            <tr>
+                <td><strong>properties</strong></td>
+                <td>PlainObject</td>
+                <td>—</td>
+                <td>Об'єкт з CSS-властивостями та їх цільовими значеннями. Властивості — camelCase. Значення — числові або спеціальні рядки: <code>"hide"</code>, <code>"show"</code>, <code>"toggle"</code>. Допускаються відносні значення з <code>+=</code> або <code>-=</code>.</td>
+            </tr>
+            <tr>
+                <td><strong>duration</strong></td>
+                <td>Number або String</td>
+                <td>400</td>
+                <td>Тривалість анімації (мс). <code>"fast"</code> = 200 мс, <code>"slow"</code> = 600 мс.</td>
+            </tr>
+            <tr>
+                <td><strong>easing</strong></td>
+                <td>String</td>
+                <td><code>"swing"</code></td>
+                <td>Крива швидкості анімації (кубічна крива Безьє). <code>"linear"</code> — рівномірна швидкість від початку до кінця. <code>"swing"</code> — повільний старт і закінчення, швидкість збільшується в середині.</td>
+            </tr>
+            <tr>
+                <td><strong>complete</strong></td>
+                <td>Function</td>
+                <td>—</td>
+                <td>Функція, яка буде виконана після завершення анімації. Викликається один раз для кожного відповідного елемента. Всередині функції <code>this</code> посилається на DOM-елемент.</td>
+            </tr>
+            <tr>
+                <td><strong>queue</strong></td>
+                <td>Boolean або String</td>
+                <td><code>true</code></td>
+                <td>Якщо <code>false</code> — анімація виконується негайно, поза чергою. Рядок — назва черги (з jQuery 1.7). При користувацькому імені черги необхідно викликати <code>.dequeue("ім'я")</code>.</td>
+            </tr>
+            <tr>
+                <td><strong>specialEasing</strong></td>
+                <td>PlainObject</td>
+                <td>—</td>
+                <td>Об'єкт, що містить одну або кілька CSS-властивостей і відповідні їм функції плавності. Додано у версії 1.4.</td>
+            </tr>
+            <tr>
+                <td><strong>step</strong></td>
+                <td>Function(now, tween)</td>
+                <td>—</td>
+                <td>Функція, що викликається для кожної анімованої властивості кожного анімованого елемента. Дає можливість змінювати об'єкт Tween перед встановленням значення.</td>
+            </tr>
+            <tr>
+                <td><strong>progress</strong></td>
+                <td>Function</td>
+                <td>—</td>
+                <td>Функція, що викликається після кожного кроку анімації, лише один раз для кожного анімованого елемента (незалежно від кількості властивостей). Додано у версії 1.8.</td>
+            </tr>
+            <tr>
+                <td><strong>start</strong></td>
+                <td>Function(animation)</td>
+                <td>—</td>
+                <td>Функція, що викликається, коли анімація елемента починається. Додано у версії 1.8.</td>
+            </tr>
+            <tr>
+                <td><strong>done</strong></td>
+                <td>Function(animation, jumpedToEnd)</td>
+                <td>—</td>
+                <td>Функція, що викликається, коли анімація елемента завершується успішно. Додано у версії 1.8.</td>
+            </tr>
+            <tr>
+                <td><strong>fail</strong></td>
+                <td>Function(animation, jumpedToEnd)</td>
+                <td>—</td>
+                <td>Функція, що викликається, коли анімацію елемента не вдається завершити. Додано у версії 1.8.</td>
+            </tr>
+            <tr>
+                <td><strong>always</strong></td>
+                <td>Function(animation, jumpedToEnd)</td>
+                <td>—</td>
+                <td>Функція, що викликається, коли анімація елемента завершується або зупиняється незавершеною. Додано у версії 1.8.</td>
+            </tr>
+        </table>
+    </div>
+
+    <h3>Анімовані CSS-властивості (перелік):</h3>
+    <div class="table-wrap">
+        <table>
+            <tr><th>Властивість</th><th>Опис</th></tr>
+            <tr><td>backgroundPositionX</td><td>Положення фонового зображення по осі X</td></tr>
+            <tr><td>backgroundPositionY</td><td>Положення фонового зображення по осі Y</td></tr>
+            <tr><td>borderWidth</td><td>Ширина меж елемента</td></tr>
+            <tr><td>borderBottomWidth</td><td>Ширина нижньої межі</td></tr>
+            <tr><td>borderLeftWidth</td><td>Ширина лівої межі</td></tr>
+            <tr><td>borderRightWidth</td><td>Ширина правої межі</td></tr>
+            <tr><td>borderTopWidth</td><td>Ширина верхньої межі</td></tr>
+            <tr><td>borderSpacing</td><td>Відстань між межами сусідніх комірок</td></tr>
+            <tr><td>bottom</td><td>Зміщення позиціонованого елемента від нижнього краю</td></tr>
+            <tr><td>fontSize</td><td>Розмір шрифту елемента</td></tr>
+            <tr><td>height</td><td>Висота елемента</td></tr>
+            <tr><td>left</td><td>Зміщення позиціонованого елемента від лівого краю</td></tr>
+            <tr><td>letterSpacing</td><td>Інтервал між символами в тексті</td></tr>
+            <tr><td>lineHeight</td><td>Міжрядковий інтервал</td></tr>
+            <tr><td>margin</td><td>Зовнішні відступи з усіх сторін елемента</td></tr>
+            <tr><td>marginBottom</td><td>Зовнішній відступ з нижнього краю</td></tr>
+            <tr><td>marginLeft</td><td>Зовнішній відступ з лівого краю</td></tr>
+            <tr><td>marginRight</td><td>Зовнішній відступ з правого краю</td></tr>
+            <tr><td>marginTop</td><td>Зовнішній відступ зверху</td></tr>
+            <tr><td>maxHeight</td><td>Максимальна висота елемента</td></tr>
+            <tr><td>maxWidth</td><td>Максимальна ширина елемента</td></tr>
+            <tr><td>minHeight</td><td>Мінімальна висота елемента</td></tr>
+            <tr><td>minWidth</td><td>Мінімальна ширина елемента</td></tr>
+            <tr><td>opacity</td><td>Прозорість елемента</td></tr>
+            <tr><td>outlineWidth</td><td>Ширина контуру елемента</td></tr>
+            <tr><td>padding</td><td>Внутрішні відступи з усіх сторін</td></tr>
+            <tr><td>paddingBottom</td><td>Внутрішній відступ знизу</td></tr>
+            <tr><td>paddingLeft</td><td>Внутрішній відступ зліва</td></tr>
+            <tr><td>paddingRight</td><td>Внутрішній відступ справа</td></tr>
+            <tr><td>paddingTop</td><td>Внутрішній відступ зверху</td></tr>
+            <tr><td>right</td><td>Зміщення позиціонованого елемента від правого краю</td></tr>
+            <tr><td>textIndent</td><td>Відступ першого рядка текстового блоку</td></tr>
+            <tr><td>top</td><td>Зміщення позиціонованого елемента від верхнього краю</td></tr>
+            <tr><td>width</td><td>Ширина елемента</td></tr>
+            <tr><td>wordSpacing</td><td>Пробіл між словами в тексті</td></tr>
+        </table>
+    </div>
+
+    <div class="info">
+        <strong>Увага!</strong> Метод <code>.animate()</code> не підтримує анімацію кольорів (<code>color</code>, <code>backgroundColor</code>) без плагіну jQuery UI.
+    </div>
+
+    <h3>Приклади:</h3>
+    <pre>// Проста анімація
+$('#box').animate({ left: '250px', opacity: 0.5 }, 1000);
+
+// Черга анімацій (виконуються послідовно)
+$('#box').animate({ left: '300px' }, 1000)
+         .animate({ top: '100px' }, 500)
+         .animate({ opacity: 0 }, 800);
+
+// Спеціальні значення
+$('#box').animate({ height: 'toggle' });  // показати або приховати</pre>
+</div>
+
+<!-- ===== ЗАВДАННЯ 1 ===== -->
+<div class="section">
+    <h2>Завдання 1 — .hide() та .show()</h2>
+
+    <p>При натисканні на кнопку з id = <code>but1</code> абзац з id = <code>par1</code> повинен зникати,
+    а при натисканні на кнопку c id = <code>but2</code> — з'являтися.</p>
+
+    <button id="but1">Приховати (#but1)</button>
+    <button id="but2">Показати (#but2)</button>
+
+    <p id="par1">Навчальний заклад було відкрито в 1966 році відповідно до Постанови Ради Міністрів СРСР від 07 листопада 1963 р. № 1210 на виробничій базі Черкаського хімічного комбінату (зараз – ПАТ Азот). Перша назва – технічне училище № 2 м. Черкаси.</p>
+
+    <pre>$('#but1').click(function() {
+    $('#par1').hide();
+});
+
+$('#but2').click(function() {
+    $('#par1').show();
+});</pre>
+</div>
+
+<!-- ===== ЗАВДАННЯ 2 ===== -->
+<div class="section">
+    <h2>Завдання 2 — .fadeTo() при наведенні курсора</h2>
+
+    <p>При наведенні курсора миші на абзац з id = <code>par2</code> прозорість абзацу повинна
+    плавно змінитися протягом 3 секунд, а при відведенні — відновитися.</p>
+
+    <p id="par2">В подальшому заклад реорганізовувався: у 1984 р. – у середнє професійно-технічне училище № 10 м. Черкаси, у 1991 р. – вище професійне училище № 10 м. Черкаси. 1985 року добудовано навчальний корпус № 2, у 2011р. завершено реконструкцію навчального корпусу №1.</p>
+
+    <pre>$('#par2').mouseenter(function() {
+    $(this).fadeTo(3000, 0.3);
+});
+
+$('#par2').mouseleave(function() {
+    $(this).fadeTo(1000, 1);
+});</pre>
+</div>
+
+<!-- ===== ЗАВДАННЯ 3 ===== -->
+<div class="section">
+    <h2>Завдання 3 — .animate() зміна висоти</h2>
+
+    <p>При натисканні на кнопку з id = <code>but3</code> висота елемента <code>wrap1</code> повинна
+    бути зменшена до 0 протягом 5 секунд. При натисканні на кнопку <code>but4</code> — повернутися
+    до початкового значення за 7 секунд.</p>
+
+    <button id="but3">Згорнути (#but3, 5 с)</button>
+    <button id="but4">Розгорнути (#but4, 7 с)</button>
+
+    <p><span id="wrap1">Перші 25 років своєї діяльності навчальний заклад займався підготовкою фахівців, в основному, для ПАТ Азот. Найбільш відомими випускниками тих років були Корчака Микола Іванович (головний інженер ПАТ Азот), Шепель Володимир Петрович (голова Ради Черкаської обласної профспілки працівників хімічної і нафтохімічної галузей промисловості), Шолудько Петро Іванович (начальник цеху контрольно-вимірювальних приладів і автоматики ПАТ Азот), Калько Тетяна Георгіївна (майстер виробничого навчання технічного училища № 2 м. Черкаси).</span></p>
+
+    <pre>var wrap1Height = $('#wrap1').height();  // зберігаємо початкову висоту
+
+$('#but3').click(function() {
+    $('#wrap1').animate({ height: 0 }, 5000);
+});
+
+$('#but4').click(function() {
+    $('#wrap1').animate({ height: wrap1Height }, 7000);
+});</pre>
+</div>
+
+<!-- ===== ЗАВДАННЯ 4 ===== -->
+<div class="section">
+    <h2>Завдання 4 — Анімація: червоний квадрат рухається по чорних</h2>
+
+    <p>Створіть анімацію, що переміщує червоний квадрат по черзі по всіх чорних квадратах з цифрами.</p>
+
+    <button id="but5">Запустити анімацію (#but5)</button>
+
+    <div id="animArea">
+        <div class="black-sq" id="sq1" style="left:60px;">1</div>
+        <div class="black-sq" id="sq2" style="left:130px;">2</div>
+        <div class="black-sq" id="sq3" style="left:200px;">3</div>
+        <div class="black-sq" id="sq4" style="left:270px;">4</div>
+        <div class="black-sq" id="sq5" style="left:340px;">5</div>
+        <div id="redSq"></div>
+    </div>
+
+    <pre>$('#but5').click(function() {
+    var positions = [];
+    $('.black-sq').each(function() {
+        positions.push($(this).position().left);
+    });
+
+    var $red = $('#redSq');
+    $red.stop(true, true).css('left', 0);
+
+    var chain = $red.animate({ left: positions[0] }, 600);
+    for (var i = 1; i < positions.length; i++) {
+        chain = chain.animate({ left: positions[i] }, 600);
+    }
+});</pre>
+</div>
+
+<!-- ===== SCRIPT ===== -->
+<script>
+$(document).ready(function () {
+
+    // ===== ЗАВДАННЯ 1: hide / show =====
+    $('#but1').click(function() {
+        $('#par1').hide();
+    });
+
+    $('#but2').click(function() {
+        $('#par1').show();
+    });
+
+
+    // ===== ЗАВДАННЯ 2: fadeTo on hover =====
+    $('#par2').mouseenter(function() {
+        $(this).fadeTo(3000, 0.3);
+    });
+
+    $('#par2').mouseleave(function() {
+        $(this).fadeTo(1000, 1);
+    });
+
+
+    // ===== ЗАВДАННЯ 3: animate height =====
+    var wrap1Height = $('#wrap1').height();
+
+    $('#but3').click(function() {
+        $('#wrap1').animate({ height: 0 }, 5000);
+    });
+
+    $('#but4').click(function() {
+        $('#wrap1').animate({ height: wrap1Height }, 7000);
+    });
+
+
+    // ===== ЗАВДАННЯ 4: red square animation =====
+    $('#but5').click(function() {
+        var positions = [];
+        $('.black-sq').each(function() {
+            positions.push($(this).position().left);
+        });
+
+        var $red = $('#redSq');
+        $red.stop(true, true).css('left', 0);
+
+        var chain = $red.animate({ left: positions[0] }, 600);
+        for (var i = 1; i < positions.length; i++) {
+            chain = chain.animate({ left: positions[i] }, 600);
+        }
+    });
+
+});
+</script>
+</body>
+</html>

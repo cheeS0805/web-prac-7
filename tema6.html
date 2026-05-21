@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тема 6 — Перебір масиву, об'єкта і елементів</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background: #f9f9f9; }
+        h1  { color: #1a237e; }
+        h2  { color: #283593; border-left: 4px solid #3949ab; padding-left: 10px; }
+        h3  { color: #37474f; margin-top: 16px; }
+
+        .section {
+            background: white; border: 1px solid #e0e0e0; padding: 20px;
+            margin: 20px 0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .info {
+            background: #e3f2fd; border-left: 3px solid #1976d2;
+            padding: 8px 12px; margin: 8px 0; border-radius: 0 5px 5px 0; font-size: 14px;
+        }
+        code {
+            background: #263238; color: #80cbc4; padding: 2px 7px;
+            border-radius: 3px; font-family: monospace; font-size: 13px;
+        }
+        pre {
+            background: #263238; color: #f8f8f2; padding: 14px;
+            border-radius: 6px; font-size: 13px; line-height: 1.6;
+            overflow-x: auto; margin: 10px 0;
+        }
+
+        .table-wrap { overflow-x: auto; margin: 10px 0; }
+        table { border-collapse: collapse; width: 100%; }
+        th { background: #1565c0; color: #fff; padding: 9px 13px; text-align: left; }
+        td { padding: 8px 13px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+        tr:nth-child(even) td { background: #f5f5f5; }
+
+        .result {
+            background: #f5f5f5; border-left: 4px solid #f57c00;
+            padding: 10px 15px; margin: 10px 0; border-radius: 0 5px 5px 0;
+            font-family: monospace; font-size: 14px; white-space: pre-wrap; min-height: 24px;
+        }
+        .result.green  { border-color: #388e3c; background: #f1f8e9; }
+        .result.blue   { border-color: #1976d2; background: #e3f2fd; }
+        .result.purple { border-color: #7b1fa2; background: #f3e5f5; }
+
+        /* Стилі для div.name та сусідніх div */
+        .name  { padding: 8px 14px; margin: 4px 0; border: 1px solid #90a4ae; border-radius: 4px; background: #fff; display: inline-block; min-width: 180px; }
+        .price { padding: 8px 14px; margin: 4px 0; border: 1px dashed #ffb300; border-radius: 4px; background: #fffde7; display: inline-block; }
+        div:not([class]) { padding: 8px 14px; margin: 4px 0; color: #757575; font-style: italic; }
+
+        #myList { padding-left: 20px; }
+        #myList li { padding: 5px 8px; margin: 3px 0; border-radius: 3px; }
+
+        /* break/continue demo */
+        #breakDemo li, #continueDemo li {
+            display: inline-block; padding: 6px 12px; margin: 3px;
+            border: 1px solid #ccc; border-radius: 4px; background: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Тема 6. Перебір масиву, об'єкта і елементів</h1>
+
+<!-- ===== ТЕОРІЯ ===== -->
+<div class="section">
+    <h2>Теорія — $.each та .each()</h2>
+
+    <p>У бібліотеці jQuery є дві різні сутності з назвою <code>each</code>:</p>
+
+    <div class="table-wrap">
+        <table>
+            <tr>
+                <th>Сутність</th>
+                <th>Синтаксис</th>
+                <th>Призначення</th>
+                <th>Параметри функції</th>
+            </tr>
+            <tr>
+                <td><strong>$.each()</strong><br><small>(глобальна функція)</small></td>
+                <td><code>$.each(array|object, fn)</code></td>
+                <td>Універсальна функція jQuery — перебирає елементи масиву або властивості об'єкта</td>
+                <td><code>index</code> — індекс або ключ<br><code>value</code> — значення</td>
+            </tr>
+            <tr>
+                <td><strong>.each()</strong><br><small>(метод jQuery)</small></td>
+                <td><code>$(selector).each(fn)</code></td>
+                <td>Метод jQuery-об'єкта — застосовується до набору DOM-елементів для організації циклу по них</td>
+                <td><code>index</code> — порядковий номер ітерації<br><code>element</code> — DOM-елемент (= <code>this</code>)</td>
+            </tr>
+        </table>
+    </div>
+
+    <h3>Синтаксис $.each():</h3>
+    <pre>$.each(array_або_object, function(index, value) {
+    // index  — індекс (для масиву) або ключ (для об'єкта)
+    // value  — значення поточного елемента
+    // this   — посилання на поточний елемент
+});</pre>
+
+    <h3>Синтаксис .each():</h3>
+    <pre>$(selector).each(function(index, element) {
+    // index   — порядковий номер поточної ітерації (з 0)
+    // element — DOM-елемент (аналог this)
+    // this    — посилання на поточний DOM-елемент
+});</pre>
+
+    <h3>Переривання та пропуск ітерації:</h3>
+    <div class="table-wrap">
+        <table>
+            <tr><th>Аналог</th><th>В $.each / .each()</th><th>Опис</th></tr>
+            <tr>
+                <td><code>break</code></td>
+                <td><code>return false;</code></td>
+                <td>Переривання циклу $.each — повернути <code>false</code></td>
+            </tr>
+            <tr>
+                <td><code>continue</code></td>
+                <td><code>return;</code></td>
+                <td>Перехід до наступної ітерації — повернути будь-яке значення, відмінне від <code>false</code></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!-- ===== ЗАВДАННЯ 1 ===== -->
+<div class="section">
+    <h2>Завдання 1 — $.each та .each() для елементів з class="name"</h2>
+
+    <p>Організувати цикл <code>each</code> за елементами DOM, що мають клас <code>name</code>,
+    <strong>двома способами</strong>, використовуючи дві різні сутності <code>each</code>:
+    <code>$.each($('.name')...)</code> та <code>$('.name').each(...)</code>.</p>
+
+    <!-- HTML-код згідно з методичкою -->
+    <div class="name">Raspberry pi</div>
+    <div>single-board compute</div>
+    <div class="name">Intel Galileo Gen2</div>
+    <div class="price">19$</div>
+    <div class="name">Pine A64 Plus</div>
+
+    <h3>Спосіб 1 — $.each($('.name'), function(index, element) {}):</h3>
+    <pre>$.each($('.name'), function(index, element) {
+    console.log('index: ' + index + ', text: ' + $(element).text());
+});</pre>
+    <div class="result green" id="task1a"></div>
+
+    <h3>Спосіб 2 — $('.name').each(function(index, element) {}):</h3>
+    <pre>$('.name').each(function(index, element) {
+    console.log('index: ' + index + ', text: ' + $(element).text());
+});</pre>
+    <div class="result green" id="task1b"></div>
+</div>
+
+<!-- ===== ЗАВДАННЯ 2 ===== -->
+<div class="section">
+    <h2>Завдання 2 — Перебір дочірніх елементів в ul#myList (each children)</h2>
+
+    <p>Перебрати всі дочірні елементи, розташовані в <code>ul</code> з id <code>"myList"</code>.</p>
+
+    <!-- HTML список згідно з методичкою -->
+    <ul id="myList">
+        <li>HTML</li>
+        <li>CSS</li>
+        <li>JavaScript</li>
+    </ul>
+
+    <pre>$('#myList').children().each(function(index, element) {
+    console.log('index: ' + index + ', text: ' + $(element).text());
+});</pre>
+
+    <div class="result purple" id="task2"></div>
+</div>
+
+<!-- ===== ЗАВДАННЯ 3 ===== -->
+<div class="section">
+    <h2>Завдання 3 — Визначити останній індекс та елемент в &lt;div class="name"&gt;</h2>
+
+    <p>Визначити <strong>останній індекс</strong> та <strong>останній елемент</strong>
+    у колекції <code>div.name</code>.</p>
+
+    <!-- HTML-код згідно з методичкою (той самий, що і в завданні 1) -->
+    <div class="name">Raspberry pi</div>
+    <div>single-board compute</div>
+    <div class="name">Intel Galileo Gen2</div>
+    <div class="price">19$</div>
+    <div class="name">Pine A64 Plus</div>
+
+    <pre>var lastIndex = -1;
+var lastText  = '';
+
+$('div.name').each(function(index) {
+    lastIndex = index;
+    lastText  = $(this).text();
+});
+
+console.log('Останній індекс: ' + lastIndex);
+console.log('Останній елемент: ' + lastText);</pre>
+
+    <div class="result" id="task3"></div>
+</div>
+
+<!-- ===== SCRIPT ===== -->
+<script>
+$(document).ready(function () {
+
+    // ===== ЗАВДАННЯ 1 =====
+
+    // Спосіб 1: $.each($('.name'), fn)
+    var t1a = '';
+    $.each($('.name'), function(index, element) {
+        t1a += 'index: ' + index + ',  text: ' + $(element).text() + '\n';
+    });
+    $('#task1a').text(t1a.trim());
+
+    // Спосіб 2: $('.name').each(fn)
+    var t1b = '';
+    $('.name').each(function(index, element) {
+        t1b += 'index: ' + index + ',  text: ' + $(element).text() + '\n';
+    });
+    $('#task1b').text(t1b.trim());
+
+    // підсвічуємо .name елементи
+    $('.name').each(function(i) {
+        $(this).css('background-color', i % 2 === 0 ? '#e3f2fd' : '#e8f5e9');
+    });
+
+
+    // ===== ЗАВДАННЯ 2 =====
+    var t2 = '';
+    var colors = ['#fff9c4', '#e8f5e9', '#e3f2fd'];
+    $('#myList').children().each(function(index, element) {
+        t2 += 'index: ' + index + ',  text: ' + $(element).text() + '\n';
+        $(element).css('background-color', colors[index % colors.length]);
+    });
+    $('#task2').text(t2.trim());
+
+
+    // ===== ЗАВДАННЯ 3 =====
+    var lastIndex = -1;
+    var lastText  = '';
+
+    $('div.name').each(function(index) {
+        lastIndex = index;
+        lastText  = $(this).text();
+    });
+
+    $('#task3').text(
+        'Всього div.name: ' + $('div.name').length + '\n' +
+        'Останній індекс: ' + lastIndex + '\n' +
+        'Останній елемент: "' + lastText + '"'
+    );
+
+});
+</script>
+</body>
+</html>

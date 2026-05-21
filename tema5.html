@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тема 5 — Масиви jQuery: сортування та об'єднання</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background: #f9f9f9; }
+        h1 { color: #1a237e; }
+        h2 { color: #283593; border-left: 4px solid #3949ab; padding-left: 10px; }
+        h3 { color: #37474f; margin-top: 14px; }
+        .section { background: white; border: 1px solid #e0e0e0; padding: 20px;
+                   margin: 20px 0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        code { background: #263238; color: #80cbc4; padding: 2px 7px;
+               border-radius: 3px; font-family: monospace; font-size: 13px; }
+        pre  { background: #263238; color: #f8f8f2; padding: 14px; border-radius: 6px;
+               font-size: 13px; line-height: 1.6; overflow-x: auto; }
+        .result { background: #e8eaf6; border-left: 4px solid #3949ab; padding: 10px 14px;
+                  margin: 6px 0; border-radius: 0 5px 5px 0; font-family: monospace; font-size: 13px; }
+        .result-green { background: #e8f5e9; border-left: 4px solid #388e3c; padding: 10px 14px;
+                        margin: 6px 0; border-radius: 0 5px 5px 0; font-family: monospace; font-size: 13px; }
+        .info { background: #e3f2fd; border-left: 3px solid #1976d2; padding: 8px 12px;
+                margin: 8px 0; border-radius: 0 5px 5px 0; font-size: 14px; }
+        table { border-collapse: collapse; width: 100%; margin: 8px 0; font-size: 14px; }
+        th { background: #3949ab; color: white; padding: 8px 12px; text-align: left; }
+        td { padding: 7px 12px; border-bottom: 1px solid #e0e0e0; }
+        tr:nth-child(even) td { background: #f5f5f5; }
+        .col2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .box { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 6px; padding: 12px; }
+    </style>
+</head>
+<body>
+<h1>Тема 5. Масиви jQuery — сортування та об'єднання</h1>
+
+<!-- ===== ТЕОРІЯ ===== -->
+<div class="section">
+    <h2>Теорія: методи сортування та об'єднання</h2>
+
+    <h3>$.map(array/object, function) — перетворення елементів</h3>
+    <p>Застосовує задану функцію до кожного елемента масиву або властивості об'єкта
+       та повертає новий масив. Функція обробляє кожен елемент і повертає нове значення.</p>
+    <pre>var arr = [1, 2, 3, 4, 5];
+var doubled = $.map(arr, function(val, i) {
+    return val * 2;
+});
+// → [2, 4, 6, 8, 10]</pre>
+
+    <h3>jQuery.unique(array) — видалення дублікатів DOM-елементів</h3>
+    <p>Функція <code>jQuery.unique()</code> сортує масив DOM-елементів та видаляє дублікати.
+       Вона працює виключно з DOM-елементами — не з рядками чи числами.</p>
+    <pre>var divs = $('div').get();          // масив DOM-елементів
+var unique = jQuery.unique(divs);    // видалити дублікати
+console.log(unique.length);          // кількість унікальних div</pre>
+
+    <h3>$.merge(first, second) — об'єднання двох масивів</h3>
+    <p>Об'єднує вміст другого масиву у перший. Змінює перший масив та повертає його.
+       Для збереження оригіналу — передавати порожній масив першим аргументом.</p>
+    <pre>var arr1 = [1, 2, 3];
+var arr2 = [4, 5, 6];
+$.merge(arr1, arr2);   // arr1 = [1, 2, 3, 4, 5, 6]
+// Безпечне злиття (не змінює оригінали):
+var merged = $.merge($.merge([], arr1), arr2);</pre>
+
+    <h3>$.extend([deep], target, object1, [object2, ...]) — розширення об'єктів</h3>
+    <p>Зливає властивості одного або більше об'єктів у цільовий об'єкт.</p>
+    <ul>
+        <li>Перший параметр — цільовий об'єкт (він буде змінений і повернутий)</li>
+        <li>Якщо перший аргумент — <code>true</code>, виконується <strong>глибоке</strong> злиття</li>
+        <li>При поверхневому злитті вкладені об'єкти перезаписуються повністю</li>
+        <li>При глибокому злитті вкладені об'єкти зливаються рекурсивно</li>
+    </ul>
+    <pre>// Поверхневе злиття:
+var result = $.extend({}, obj1, obj2);
+// Глибоке злиття:
+var deep = $.extend(true, {}, obj1, obj2);</pre>
+</div>
+
+<!-- ===== ЗАВДАННЯ 1 — $.merge ===== -->
+<div class="section">
+    <h2>Завдання 1 — Об'єднання списків студентів двох груп ($.merge)</h2>
+    <p>Створити списки студентів двох груп з полями <b>«Прізвище»</b> та <b>«Вік»</b>.
+       Об'єднати їх за допомогою <code>$.merge()</code> та відсортувати.</p>
+
+    <div class="col2">
+        <div class="box">
+            <h3>Група 1П-23:</h3>
+            <div class="result" id="res1g1"></div>
+        </div>
+        <div class="box">
+            <h3>Група 2П-23:</h3>
+            <div class="result" id="res1g2"></div>
+        </div>
+    </div>
+
+    <h3>Об'єднаний масив через $.merge():</h3>
+    <div class="result" id="res1merged"></div>
+
+    <h3>Довжина масиву до та після $.merge:</h3>
+    <div class="info" id="res1lengths"></div>
+
+    <h3>Відсортовано за прізвищем (А → Я):</h3>
+    <div class="result" id="res1sortName"></div>
+
+    <h3>Відсортовано за віком (↑):</h3>
+    <div class="result" id="res1sortAge"></div>
+
+    <h3>Зведена таблиця після $.merge та сортування за прізвищем:</h3>
+    <table>
+        <tr><th>№</th><th>Прізвище</th><th>Вік</th><th>Група</th></tr>
+        <tbody id="res1table"></tbody>
+    </table>
+</div>
+
+<!-- ===== ЗАВДАННЯ 2 — $.map ===== -->
+<div class="section">
+    <h2>Завдання 2 — Сортування та порядкові номери ($.map)</h2>
+    <p>Взяти об'єднаний список студентів, відсортувати, за допомогою <code>$.map()</code>
+       надати кожному студенту порядковий номер. Вивести окремо студентів з
+       <b>парними</b> та <b>непарними</b> порядковими номерами.</p>
+
+    <h3>Список після сортування з порядковими номерами ($.map):</h3>
+    <div class="result" id="res2numbered"></div>
+
+    <h3>Студенти з парними порядковими номерами (2, 4, 6…):</h3>
+    <div class="result" id="res2even"></div>
+
+    <h3>Студенти з непарними порядковими номерами (1, 3, 5…):</h3>
+    <div class="result" id="res2odd"></div>
+
+    <h3>$.map — перетворення масиву прізвищ у ВЕРХНІЙ РЕГІСТР:</h3>
+    <div class="result" id="res2upper"></div>
+
+    <h3>$.map — масив рядків «Прізвище (Вік р.)»:</h3>
+    <div class="result" id="res2str"></div>
+</div>
+
+<!-- ===== ЗАВДАННЯ 3 — $.extend ===== -->
+<div class="section">
+    <h2>Завдання 3 — Об'єднання двох об'єктів з 7 параметрами ($.extend)</h2>
+    <p>Створити два об'єкти, кожен з <b>7 параметрами</b> (один об'єкт має довільні значення,
+       що перезаписують перший). Виконати поверхневе та глибоке злиття.</p>
+
+    <div class="col2">
+        <div class="box">
+            <h3>Об'єкт 1 (базовий студент):</h3>
+            <div class="result" id="res3obj1"></div>
+        </div>
+        <div class="box">
+            <h3>Об'єкт 2 (довільні / оновлені значення):</h3>
+            <div class="result" id="res3obj2"></div>
+        </div>
+    </div>
+
+    <h3>Поверхневе злиття — $.extend({}, obj1, obj2):</h3>
+    <div class="info">
+        При поверхневому злитті вкладений об'єкт <code>address</code> з obj2
+        <strong>повністю замінить</strong> address з obj1 (не зіллється).
+    </div>
+    <div class="result" id="res3shallow"></div>
+
+    <h3>Глибоке злиття — $.extend(true, {}, obj1, obj2):</h3>
+    <div class="info">
+        При глибокому злитті вкладені об'єкти <strong>зливаються рекурсивно</strong> —
+        поля з обох об'єктів будуть присутні у результаті.
+    </div>
+    <div class="result" id="res3deep"></div>
+
+    <h3>Порівняння результатів:</h3>
+    <table>
+        <tr><th>Поле</th><th>Об'єкт 1</th><th>Об'єкт 2</th><th>Поверхневе $.extend</th><th>Глибоке $.extend</th></tr>
+        <tbody id="res3compare"></tbody>
+    </table>
+</div>
+
+<!-- ===== ДЕМО: jQuery.unique() ===== -->
+<div class="section">
+    <h2>Додатково — jQuery.unique() видалення дублікатів DOM-елементів</h2>
+    <p><code>jQuery.unique()</code> видаляє дублікати з масиву DOM-елементів.</p>
+
+    <div id="uniqueDemo">
+        <p class="item">Абзац 1</p>
+        <p class="item">Абзац 2</p>
+        <p class="item">Абзац 3</p>
+    </div>
+
+    <h3>До jQuery.unique() (з дублікатами):</h3>
+    <div class="result" id="resUniqueBefore"></div>
+
+    <h3>Після jQuery.unique() (без дублікатів):</h3>
+    <div class="result" id="resUniqueAfter"></div>
+</div>
+
+<script>
+$(document).ready(function () {
+
+    // ================================================================
+    // ЗАВДАННЯ 1 — $.merge
+    // ================================================================
+
+    var group1 = [
+        { surname: 'Іваненко',   age: 20, group: '1П-23' },
+        { surname: 'Петренко',   age: 19, group: '1П-23' },
+        { surname: 'Коваленко',  age: 22, group: '1П-23' },
+        { surname: 'Бондаренко', age: 18, group: '1П-23' },
+        { surname: 'Захаренко',  age: 21, group: '1П-23' }
+    ];
+
+    var group2 = [
+        { surname: 'Мельниченко', age: 23, group: '2П-23' },
+        { surname: 'Кравченко',   age: 20, group: '2П-23' },
+        { surname: 'Шевченко',    age: 17, group: '2П-23' },
+        { surname: 'Гончаренко',  age: 21, group: '2П-23' },
+        { surname: 'Власенко',    age: 19, group: '2П-23' }
+    ];
+
+    function fmtStudent(s) {
+        return s.surname + ' (' + s.age + ' р.)';
+    }
+
+    // Виводимо групи
+    $('#res1g1').html($.map(group1, fmtStudent).join('<br>'));
+    $('#res1g2').html($.map(group2, fmtStudent).join('<br>'));
+
+    // $.merge — об'єднуємо у новий масив (не змінюємо оригінали)
+    var merged = $.merge($.merge([], group1), group2);
+
+    $('#res1merged').html(
+        '$.merge(group1, group2) → масив з <b>' + merged.length + '</b> студентів:<br>' +
+        $.map(merged, fmtStudent).join(' | ')
+    );
+
+    $('#res1lengths').html(
+        'group1.length = <b>' + group1.length + '</b> · ' +
+        'group2.length = <b>' + group2.length + '</b> · ' +
+        'після $.merge = <b>' + merged.length + '</b>'
+    );
+
+    // Сортування за прізвищем
+    var byName = merged.slice().sort(function(a, b) {
+        return a.surname.localeCompare(b.surname, 'uk');
+    });
+    $('#res1sortName').html($.map(byName, fmtStudent).join(' | '));
+
+    // Сортування за віком
+    var byAge = merged.slice().sort(function(a, b) { return a.age - b.age; });
+    $('#res1sortAge').html($.map(byAge, fmtStudent).join(' | '));
+
+    // Таблиця (за прізвищем)
+    $.each(byName, function(i, s) {
+        $('#res1table').append(
+            '<tr><td>' + (i + 1) + '</td><td>' + s.surname +
+            '</td><td>' + s.age + '</td><td>' + s.group + '</td></tr>'
+        );
+    });
+
+
+    // ================================================================
+    // ЗАВДАННЯ 2 — $.map з порядковими номерами
+    // ================================================================
+
+    // Відсортований масив (за прізвищем)
+    var sorted = merged.slice().sort(function(a, b) {
+        return a.surname.localeCompare(b.surname, 'uk');
+    });
+
+    // $.map — надаємо кожному студенту порядковий номер
+    var numbered = $.map(sorted, function(s, i) {
+        return { num: i + 1, surname: s.surname, age: s.age, group: s.group };
+    });
+
+    $('#res2numbered').html(
+        '$.map додає порядковий номер:<br>' +
+        $.map(numbered, function(s) {
+            return '№' + s.num + ' ' + s.surname + ' (' + s.age + ' р.)';
+        }).join('<br>')
+    );
+
+    // Парні порядкові номери
+    var evenNum = $.grep(numbered, function(s) { return s.num % 2 === 0; });
+    $('#res2even').html(
+        $.map(evenNum, function(s) {
+            return '№' + s.num + ' ' + s.surname + ' (' + s.age + ' р.)';
+        }).join(' | ')
+    );
+
+    // Непарні порядкові номери
+    var oddNum = $.grep(numbered, function(s) { return s.num % 2 !== 0; });
+    $('#res2odd').html(
+        $.map(oddNum, function(s) {
+            return '№' + s.num + ' ' + s.surname + ' (' + s.age + ' р.)';
+        }).join(' | ')
+    );
+
+    // $.map — ВЕРХНІЙ РЕГІСТР
+    var upper = $.map(sorted, function(s) {
+        return s.surname.toUpperCase();
+    });
+    $('#res2upper').html('[' + upper.join(', ') + ']');
+
+    // $.map — рядки «Прізвище (Вік р.)»
+    var strArr = $.map(sorted, function(s) {
+        return '"' + s.surname + ' (' + s.age + ' р.)"';
+    });
+    $('#res2str').html('[' + strArr.join(', ') + ']');
+
+
+    // ================================================================
+    // ЗАВДАННЯ 3 — $.extend (два об'єкти по 7 параметрів)
+    // ================================================================
+
+    var obj1 = {
+        surname  : 'Іваненко',
+        name     : 'Іван',
+        age      : 20,
+        group    : '2П-23',
+        avgGrade : 4.2,
+        city     : 'Черкаси',
+        address  : { street: 'Шевченка', building: 12 }
+    };
+
+    var obj2 = {
+        name     : 'Іванко',           // довільне (оновлене) значення
+        age      : 21,                  // довільне значення
+        group    : '3П-23',             // довільне значення
+        avgGrade : 4.8,                 // довільне значення
+        email    : 'ivan@example.com',  // новий параметр
+        phone    : '+38 066 123 4567',  // новий параметр
+        address  : { street: 'Хрещатик', zip: '01001' }
+    };
+
+    function objToHtml(obj) {
+        return $.map(Object.keys(obj), function(k) {
+            var v = (typeof obj[k] === 'object') ? JSON.stringify(obj[k]) : obj[k];
+            return '<b>' + k + '</b>: ' + v;
+        }).join('<br>');
+    }
+
+    $('#res3obj1').html(objToHtml(obj1));
+    $('#res3obj2').html(objToHtml(obj2));
+
+    // Поверхневе $.extend — address з obj2 ПЕРЕЗАПИШЕ address obj1
+    var shallow = $.extend({}, obj1, obj2);
+    $('#res3shallow').html(objToHtml(shallow));
+
+    // Глибоке $.extend — address ЗІЛЛЄТЬСЯ
+    var deep = $.extend(true, {}, obj1, obj2);
+    $('#res3deep').html(objToHtml(deep));
+
+    // Порівняльна таблиця
+    var allKeys = ['surname','name','age','group','avgGrade','city','email','phone','address'];
+    $.each(allKeys, function(i, k) {
+        var v1 = obj1[k] !== undefined ? JSON.stringify(obj1[k]) : '<i>—</i>';
+        var v2 = obj2[k] !== undefined ? JSON.stringify(obj2[k]) : '<i>—</i>';
+        var vs = shallow[k] !== undefined ? JSON.stringify(shallow[k]) : '<i>—</i>';
+        var vd = deep[k]    !== undefined ? JSON.stringify(deep[k])    : '<i>—</i>';
+        $('#res3compare').append(
+            '<tr><td><b>' + k + '</b></td><td>' + v1 + '</td><td>' + v2 +
+            '</td><td>' + vs + '</td><td>' + vd + '</td></tr>'
+        );
+    });
+
+
+    // ================================================================
+    // ДЕМО — jQuery.unique()
+    // ================================================================
+
+    // Отримуємо елементи з дублікатами
+    var items1 = $('#uniqueDemo .item').get();
+    var items2 = $('#uniqueDemo .item').get();
+    var withDups = items1.concat(items2);  // масив з дублікатами
+
+    $('#resUniqueBefore').html(
+        'Кількість елементів з дублікатами: <b>' + withDups.length + '</b><br>' +
+        $.map(withDups, function(el) { return '"' + $(el).text() + '"'; }).join(', ')
+    );
+
+    var uniqueArr = jQuery.unique(withDups.slice());
+    $('#resUniqueAfter').html(
+        'Після jQuery.unique(): <b>' + uniqueArr.length + '</b> унікальних елементів<br>' +
+        $.map(uniqueArr, function(el) { return '"' + $(el).text() + '"'; }).join(', ')
+    );
+
+});
+</script>
+</body>
+</html>

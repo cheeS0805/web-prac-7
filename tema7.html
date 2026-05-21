@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тема 7 — Обробники подій jQuery</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background: #f9f9f9; }
+        h1  { color: #1a237e; }
+        h2  { color: #283593; border-left: 4px solid #3949ab; padding-left: 10px; }
+        h3  { color: #37474f; margin-top: 16px; }
+        .section {
+            background: white; border: 1px solid #e0e0e0; padding: 20px;
+            margin: 20px 0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .info {
+            background: #e3f2fd; border-left: 3px solid #1976d2;
+            padding: 8px 12px; margin: 8px 0; border-radius: 0 5px 5px 0; font-size: 14px;
+        }
+        code {
+            background: #263238; color: #80cbc4; padding: 2px 7px;
+            border-radius: 3px; font-family: monospace; font-size: 13px;
+        }
+        pre {
+            background: #263238; color: #f8f8f2; padding: 14px;
+            border-radius: 6px; font-size: 13px; line-height: 1.6;
+            overflow-x: auto; margin: 10px 0;
+        }
+        .table-wrap { overflow-x: auto; margin: 10px 0; }
+        table { border-collapse: collapse; width: 100%; }
+        th { background: #1565c0; color: #fff; padding: 9px 13px; text-align: left; }
+        td { padding: 8px 13px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+        tr:nth-child(even) td { background: #f5f5f5; }
+
+        button {
+            padding: 7px 16px; margin: 5px 5px 5px 0; cursor: pointer;
+            border-radius: 4px; border: 1px solid #90a4ae; background: #eceff1; font-size: 14px;
+        }
+        button:hover { background: #cfd8dc; }
+
+        /* Абзаци завдань */
+        .clickable-p {
+            background: #e3f2fd; border: 1px solid #90caf9; padding: 10px 14px;
+            margin: 5px 0; border-radius: 4px; cursor: pointer; user-select: none;
+        }
+        .clickable-p:hover { background: #bbdefb; }
+
+        /* Посилання */
+        a.t2-link { display: inline-block; margin: 6px 12px 6px 0; font-size: 15px; }
+
+        /* INPUT */
+        input[type=text] {
+            padding: 7px 10px; margin: 5px; border: 1px solid #ccc;
+            border-radius: 4px; font-size: 14px; width: 160px;
+        }
+        #test {
+            background: #fff3e0; border-left: 3px solid #f57c00;
+            padding: 8px 14px; margin: 8px 0; border-radius: 0 4px 4px 0;
+            font-size: 14px; min-height: 20px;
+        }
+
+        /* Абзаци з числами */
+        .num-p {
+            display: inline-block; background: #f3e5f5; border: 1px solid #ce93d8;
+            padding: 10px 20px; margin: 5px; border-radius: 4px; cursor: pointer;
+            font-size: 22px; font-weight: bold; min-width: 60px; text-align: center;
+            user-select: none;
+        }
+        .num-p:hover { background: #e1bee7; }
+
+        /* Список для делегування */
+        #delList { padding-left: 20px; margin: 8px 0; }
+        #delList li {
+            padding: 7px 12px; margin: 4px 0; border-radius: 4px;
+            background: #e8f5e9; border: 1px solid #a5d6a7;
+            cursor: pointer; font-size: 15px; list-style: disc;
+        }
+        #delList li:hover { background: #c8e6c9; }
+
+        /* Таблиця для делегування 2 */
+        #usersTable { border-collapse: collapse; margin: 10px 0; min-width: 300px; }
+        #usersTable th { background: #1565c0; color: white; padding: 8px 16px; }
+        #usersTable td {
+            border: 1px solid #ccc; padding: 8px 16px; cursor: pointer; font-size: 14px;
+        }
+        #usersTable td:hover { background: #e3f2fd; }
+
+        .log {
+            background: #263238; color: #a5d6a7; padding: 10px 14px;
+            border-radius: 5px; font-family: monospace; font-size: 13px;
+            min-height: 32px; max-height: 120px; overflow-y: auto; margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Тема 7. Обробники подій jQuery</h1>
+
+<!-- ===== ТЕОРІЯ ===== -->
+<div class="section">
+    <h2>Теорія — Обробники подій</h2>
+
+    <p>Обробники подій — це функції, які виконуються тільки після вчинення певних дій.</p>
+
+    <h3>Основні методи:</h3>
+    <div class="table-wrap">
+        <table>
+            <tr><th>Метод</th><th>Опис</th></tr>
+            <tr><td><code>.on(event, fn)</code></td><td>Встановлює обробник події на обрані елементи</td></tr>
+            <tr><td><code>.off(event, fn)</code></td><td>Видаляє обробник події</td></tr>
+            <tr><td><code>.one(event, fn)</code></td><td>Обробник спрацьовує лише <strong>один раз</strong></td></tr>
+            <tr><td><code>.on(event, selector, fn)</code></td><td>Делегування — обробник на батьківський елемент, фільтр за селектором</td></tr>
+        </table>
+    </div>
+
+    <h3>Функції-скорочення (shorthand):</h3>
+    <div class="table-wrap">
+        <table>
+            <tr><th>Скорочення</th><th>Подія</th></tr>
+            <tr><td><code>.click(fn)</code></td><td>Клік мишею</td></tr>
+            <tr><td><code>.dblclick(fn)</code></td><td>Подвійний клік</td></tr>
+            <tr><td><code>.mouseenter(fn)</code></td><td>Курсор заходить на елемент</td></tr>
+            <tr><td><code>.mouseleave(fn)</code></td><td>Курсор покидає елемент</td></tr>
+            <tr><td><code>.focus(fn)</code></td><td>Елемент отримує фокус</td></tr>
+            <tr><td><code>.blur(fn)</code></td><td>Елемент втрачає фокус (розфокусування)</td></tr>
+            <tr><td><code>.keydown(fn)</code></td><td>Клавіша натиснута</td></tr>
+            <tr><td><code>.submit(fn)</code></td><td>Форма відправлена</td></tr>
+        </table>
+    </div>
+</div>
+
+<!-- ===== ЗАВДАННЯ. ПОДІЇ ЧЕРЕЗ ОКРЕМІ МЕТОДИ ===== -->
+
+<!-- Завдання 1 -->
+<div class="section">
+    <h2>Завдання 1 — Клік на абзац виводить його вміст</h2>
+    <p>Дано абзаци. При натисканні на кожен абзац на екрані виводиться його вміст.</p>
+
+    <p class="clickable-p">Перший абзац — натисніть на мене</p>
+    <p class="clickable-p">Другий абзац — і на мене теж</p>
+    <p class="clickable-p">Третій абзац — клікніть для перевірки</p>
+
+    <pre>$('.clickable-p').click(function() {
+    alert( $(this).text() );
+});</pre>
+
+    <div class="log" id="log1">Клікніть на абзац вище...</div>
+</div>
+
+<!-- Завдання 2 -->
+<div class="section">
+    <h2>Завдання 2 — При наведенні на посилання дописується href</h2>
+    <p>Прив'яжіть всім посиланням подію — при наведенні в кінець тексту дописується <code>href</code> в круглих дужках.</p>
+
+    <a href="https://jquery.com" class="t2-link" id="lnk1">jQuery офіційний сайт</a><br>
+    <a href="https://developer.mozilla.org" class="t2-link" id="lnk2">MDN Web Docs</a><br>
+    <a href="https://github.com" class="t2-link" id="lnk3">GitHub</a>
+
+    <pre>$('.t2-link').mouseenter(function() {
+    var href = $(this).attr('href');
+    $(this).text( $(this).text() + ' (' + href + ')' );
+});</pre>
+</div>
+
+<!-- Завдання 3 -->
+<div class="section">
+    <h2>Завдання 3 — Після першого наведення відв'язати подію</h2>
+    <p>Доповнити завдання 2: після <strong>першого</strong> наведення на посилання слід відв'язати від нього подію, яка додає href.</p>
+
+    <a href="https://jquery.com" class="t3-link">jQuery (наведіть 1 раз)</a><br>
+    <a href="https://developer.mozilla.org" class="t3-link">MDN Web Docs (наведіть 1 раз)</a><br>
+    <a href="https://github.com" class="t3-link">GitHub (наведіть 1 раз)</a>
+
+    <pre>function addHref() {
+    $(this).text( $(this).text() + ' (' + $(this).attr('href') + ')' );
+    $(this).off('mouseenter', addHref); // відв'язуємо після першого разу
+}
+$('.t3-link').on('mouseenter', addHref);</pre>
+
+    <div class="info">Наведіть курсор — href додається лише один раз, повторні наведення не дають ефекту.</div>
+</div>
+
+<!-- Завдання 4 -->
+<div class="section">
+    <h2>Завдання 4 — INPUT при втраті фокусу виводить value в #test</h2>
+    <p>Прив'яжіть всім INPUT подію — при втраті фокусу кожен INPUT виводить своє <code>value</code> в абзац з id <code>"test"</code>.</p>
+
+    <input type="text" class="t4-inp" value="Іваненко">
+    <input type="text" class="t4-inp" value="Петренко">
+    <input type="text" class="t4-inp" value="Сидоренко">
+
+    <p id="test">Тут з'явиться value поля після втрати фокусу</p>
+
+    <pre>$('.t4-inp').blur(function() {
+    $('#test').text( $(this).val() );
+});</pre>
+</div>
+
+<!-- Завдання 5 -->
+<div class="section">
+    <h2>Завдання 5 — INPUT виводить value в Alert тільки при першому натисканні</h2>
+    <p>Для всіх INPUT — при натисканні виводити <code>value</code> в Alert, але тільки за першим кліком. Повторне натискання реакції не викликає.</p>
+
+    <input type="text" class="t5-inp" value="Поле А">
+    <input type="text" class="t5-inp" value="Поле Б">
+    <input type="text" class="t5-inp" value="Поле В">
+
+    <pre>$('.t5-inp').one('click', function() {
+    alert( $(this).val() );
+});</pre>
+
+    <div class="info">Клікніть на будь-яке поле — Alert з'явиться лише один раз.</div>
+</div>
+
+<!-- Завдання 6 -->
+<div class="section">
+    <h2>Завдання 6 — Клік на абзац із числом показує його квадрат</h2>
+    <p>Дано абзаци з числами. При натисканні на абзац в ньому з'являється квадрат числа.</p>
+
+    <p class="num-p">3</p>
+    <p class="num-p">5</p>
+    <p class="num-p">7</p>
+    <p class="num-p">9</p>
+
+    <pre>$('.num-p').click(function() {
+    var n = parseInt( $(this).text() );
+    $(this).text( n * n );
+});</pre>
+</div>
+
+<!-- Завдання 7 -->
+<div class="section">
+    <h2>Завдання 7 — Клік (квадрат, 1 раз) + подвійний клік (подвоїти, 1 раз)</h2>
+    <p>Дано абзаци з числами.</p>
+    <ul style="margin:8px 0 8px 20px; line-height:2;">
+        <li>По кліку — число замінюється на свій квадрат, але тільки за <strong>першим</strong> кліком.</li>
+        <li>По подвійному кліку — число подвоюється, але теж тільки <strong>перший</strong> раз.</li>
+    </ul>
+
+    <p class="num-p t7-p">4</p>
+    <p class="num-p t7-p">6</p>
+    <p class="num-p t7-p">8</p>
+
+    <pre>$('.t7-p').one('click', function() {
+    var n = parseInt( $(this).text() );
+    $(this).text( n * n );
+});
+
+$('.t7-p').one('dblclick', function() {
+    var n = parseInt( $(this).text() );
+    $(this).text( n * 2 );
+});</pre>
+
+    <div class="info">Клік замінює число на квадрат (1 раз). Подвійний клік подвоює поточне число (1 раз).</div>
+</div>
+
+<!-- ===== ЗАВДАННЯ НА МЕТОДИ .on() та .off() ===== -->
+<div class="section">
+    <h2>Завдання на методи .on() і .off()</h2>
+
+    <h3>1. При наведенні на посилання дописується href</h3>
+    <a href="https://jquery.com"         class="ton-link">jQuery</a>&emsp;
+    <a href="https://developer.mozilla.org" class="ton-link">MDN</a>&emsp;
+    <a href="https://github.com"         class="ton-link">GitHub</a>
+
+    <pre>$('.ton-link').on('mouseenter', function() {
+    $(this).text( $(this).text() + ' (' + $(this).attr('href') + ')' );
+});</pre>
+
+    <h3>2. Після першого наведення — відв'язати подію</h3>
+    <a href="https://jquery.com"         class="toff-link">jQuery (1 раз)</a>&emsp;
+    <a href="https://developer.mozilla.org" class="toff-link">MDN (1 раз)</a>&emsp;
+    <a href="https://github.com"         class="toff-link">GitHub (1 раз)</a>
+
+    <pre>function onHover() {
+    $(this).text( $(this).text() + ' (' + $(this).attr('href') + ')' );
+    $(this).off('mouseenter', onHover);
+}
+$('.toff-link').on('mouseenter', onHover);</pre>
+</div>
+
+<!-- ===== ЗАВДАННЯ НА .one() ===== -->
+<div class="section">
+    <h2>Завдання на метод .one()</h2>
+    <p>Дано абзаци. По першому кліку на абзац — в кінець додається <code>!</code>. Але тільки за першим кліком.</p>
+
+    <p class="clickable-p tone-p">Перший абзац</p>
+    <p class="clickable-p tone-p">Другий абзац</p>
+    <p class="clickable-p tone-p">Третій абзац</p>
+
+    <pre>$('.tone-p').one('click', function() {
+    $(this).text( $(this).text() + '!' );
+});</pre>
+</div>
+
+<!-- ===== ЗАВДАННЯ НА ДЕЛЕГУВАННЯ ===== -->
+
+<!-- Делегування 1: ul + li + кнопка -->
+<div class="section">
+    <h2>Завдання на делегування через .on() — №1</h2>
+    <p>Дано <code>ul</code> з кількома <code>li</code>. Кнопка додає новий <code>li</code> з текстом «пункт».
+    При кліку на будь-який <code>li</code> — в кінець додається <code>!</code>.
+    Це повинно працювати і для нових <code>li</code>. Подія має бути на <code>ul</code> (делегування).</p>
+
+    <ul id="delList">
+        <li>Пункт 1</li>
+        <li>Пункт 2</li>
+        <li>Пункт 3</li>
+    </ul>
+    <button id="addLiBtn">Додати li</button>
+
+    <pre>// Делегування — обробник на ul, фільтр 'li'
+// Спрацьовує навіть для li, доданих після ініціалізації
+$('#delList').on('click', 'li', function() {
+    $(this).text( $(this).text() + '!' );
+});
+
+$('#addLiBtn').on('click', function() {
+    $('#delList').append('&lt;li&gt;пункт&lt;/li&gt;');
+});</pre>
+</div>
+
+<!-- Делегування 2: таблиця + форма -->
+<div class="section">
+    <h2>Завдання на делегування через .on() — №2</h2>
+    <p>Таблиця з користувачами (ім'я і прізвище). Під таблицею — форма для додавання нового рядка.
+    При кліку на будь-яку комірку — <code>prompt</code> для зміни її тексту.
+    Подія має бути на <code>table</code> (делегування).</p>
+
+    <table id="usersTable">
+        <thead>
+            <tr><th>Ім'я</th><th>Прізвище</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Іван</td><td>Іваненко</td></tr>
+            <tr><td>Петро</td><td>Петренко</td></tr>
+            <tr><td>Олег</td><td>Коваленко</td></tr>
+        </tbody>
+    </table>
+
+    <form id="addUserForm" style="margin-top:10px;">
+        <input type="text" id="inpFirstName" placeholder="Ім'я">
+        <input type="text" id="inpLastName"  placeholder="Прізвище">
+        <button type="submit">Додати користувача</button>
+    </form>
+
+    <pre>// Делегування — обробник на table, фільтр 'td'
+$('#usersTable').on('click', 'td', function() {
+    var newText = prompt('Змініть текст комірки:', $(this).text());
+    if (newText !== null) $(this).text(newText);
+});
+
+$('#addUserForm').on('submit', function(e) {
+    e.preventDefault();
+    var first = $('#inpFirstName').val().trim();
+    var last  = $('#inpLastName').val().trim();
+    if (first || last) {
+        $('#usersTable tbody').append(
+            '&lt;tr&gt;&lt;td&gt;' + first + '&lt;/td&gt;&lt;td&gt;' + last + '&lt;/td&gt;&lt;/tr&gt;'
+        );
+        $('#inpFirstName').val('');
+        $('#inpLastName').val('');
+    }
+});</pre>
+
+    <div class="info">Натисніть на будь-яку комірку таблиці для редагування. Нові рядки, додані через форму, також редагуються — завдяки делегуванню.</div>
+</div>
+
+<!-- ===== SCRIPT ===== -->
+<script>
+$(document).ready(function () {
+
+    // ===== Завдання 1: клік → виводимо текст =====
+    $('.clickable-p').not('.tone-p').click(function() {
+        var txt = $(this).text();
+        var log = document.getElementById('log1');
+        if (log) { log.textContent += '> ' + txt + '\n'; log.scrollTop = log.scrollHeight; }
+    });
+
+
+    // ===== Завдання 2: mouseenter → дописати href =====
+    $('.t2-link').mouseenter(function() {
+        $(this).text( $(this).text() + ' (' + $(this).attr('href') + ')' );
+    });
+
+
+    // ===== Завдання 3: mouseenter → href, потім .off() =====
+    function addHref3() {
+        $(this).text( $(this).text() + ' (' + $(this).attr('href') + ')' );
+        $(this).off('mouseenter', addHref3);
+    }
+    $('.t3-link').on('mouseenter', addHref3);
+
+
+    // ===== Завдання 4: blur → value у #test =====
+    $('.t4-inp').blur(function() {
+        $('#test').text( $(this).val() );
+    });
+
+
+    // ===== Завдання 5: .one('click') → alert =====
+    $('.t5-inp').one('click', function() {
+        alert( $(this).val() );
+    });
+
+
+    // ===== Завдання 6: click → квадрат числа =====
+    $('.num-p').not('.t7-p').click(function() {
+        var n = parseInt( $(this).text() );
+        if (!isNaN(n)) $(this).text( n * n );
+    });
+
+
+    // ===== Завдання 7: .one click → квадрат, .one dblclick → подвоїти =====
+    $('.t7-p').one('click', function() {
+        var n = parseInt( $(this).text() );
+        if (!isNaN(n)) $(this).text( n * n );
+    });
+    $('.t7-p').one('dblclick', function() {
+        var n = parseInt( $(this).text() );
+        if (!isNaN(n)) $(this).text( n * 2 );
+    });
+
+
+    // ===== on/off завдання 1: mouseenter → href =====
+    $('.ton-link').on('mouseenter', function() {
+        $(this).text( $(this).text() + ' (' + $(this).attr('href') + ')' );
+    });
+
+
+    // ===== on/off завдання 2: mouseenter → href, потім off =====
+    function onHover() {
+        $(this).text( $(this).text() + ' (' + $(this).attr('href') + ')' );
+        $(this).off('mouseenter', onHover);
+    }
+    $('.toff-link').on('mouseenter', onHover);
+
+
+    // ===== .one() завдання =====
+    $('.tone-p').one('click', function() {
+        $(this).text( $(this).text() + '!' );
+    });
+
+
+    // ===== Делегування 1: ul → li =====
+    $('#delList').on('click', 'li', function() {
+        $(this).text( $(this).text() + '!' );
+    });
+    $('#addLiBtn').on('click', function() {
+        $('#delList').append('<li>пункт</li>');
+    });
+
+
+    // ===== Делегування 2: table → td + форма =====
+    $('#usersTable').on('click', 'td', function() {
+        var newText = prompt('Змініть текст комірки:', $(this).text());
+        if (newText !== null) $(this).text(newText);
+    });
+    $('#addUserForm').on('submit', function(e) {
+        e.preventDefault();
+        var first = $('#inpFirstName').val().trim();
+        var last  = $('#inpLastName').val().trim();
+        if (first || last) {
+            $('#usersTable tbody').append(
+                '<tr><td>' + first + '</td><td>' + last + '</td></tr>'
+            );
+            $('#inpFirstName').val('');
+            $('#inpLastName').val('');
+        }
+    });
+
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Звіт — Практична робота №7. Технологія jQuery</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f8; color: #212121; }
+
+        .header {
+            background: linear-gradient(135deg, #1565c0, #0288d1);
+            color: white; padding: 40px; text-align: center;
+        }
+        .header h1 { font-size: 28px; margin-bottom: 8px; }
+        .header p  { font-size: 16px; opacity: 0.9; }
+        .header .meta { margin-top: 15px; font-size: 14px; opacity: 0.8; }
+
+        .container { max-width: 980px; margin: 30px auto; padding: 0 20px; }
+
+        .card {
+            background: white; border-radius: 8px; padding: 25px;
+            margin: 20px 0; box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .card h2 {
+            font-size: 20px; color: #1565c0; border-bottom: 2px solid #1565c0;
+            padding-bottom: 8px; margin-bottom: 15px;
+        }
+        .card h3 { font-size: 15px; color: #37474f; margin: 14px 0 8px; }
+        .card p  { line-height: 1.7; color: #444; margin-bottom: 10px; }
+        .card ul { padding-left: 22px; }
+        .card li { margin: 6px 0; line-height: 1.6; }
+
+        .task-block {
+            border-left: 4px solid #42a5f5; background: #e3f2fd;
+            padding: 12px 15px; margin: 10px 0; border-radius: 0 6px 6px 0;
+        }
+        .task-block.green  { border-color: #66bb6a; background: #e8f5e9; }
+        .task-block.orange { border-color: #ffa726; background: #fff3e0; }
+        .task-block.purple { border-color: #ab47bc; background: #f3e5f5; }
+        .task-block.red    { border-color: #ef5350; background: #ffebee; }
+
+        code {
+            background: #263238; color: #80cbc4; padding: 2px 6px;
+            border-radius: 3px; font-family: 'Consolas', monospace; font-size: 13px;
+        }
+        pre {
+            background: #263238; color: #f8f8f2; padding: 14px;
+            border-radius: 6px; overflow-x: auto; font-size: 13px;
+            line-height: 1.6; margin: 10px 0; font-family: 'Consolas', monospace;
+        }
+        pre .kw  { color: #f92672; }
+        pre .fn  { color: #66d9e8; }
+        pre .str { color: #a6e22e; }
+        pre .cm  { color: #75715e; }
+        pre .num { color: #ae81ff; }
+
+        .link-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px; margin-top: 15px;
+        }
+        .link-btn {
+            display: block; text-align: center; padding: 12px;
+            background: #1565c0; color: white; text-decoration: none;
+            border-radius: 6px; font-size: 14px; transition: background 0.2s;
+        }
+        .link-btn:hover { background: #0d47a1; }
+        .link-btn.pending {
+            background: #90a4ae; cursor: default; pointer-events: none;
+        }
+
+        .table-wrap { overflow-x: auto; margin: 10px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #1565c0; color: white; padding: 10px 14px; text-align: left; }
+        td { padding: 9px 14px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+        tr:nth-child(even) td { background: #f5f5f5; }
+        tr:hover td { background: #e3f2fd; }
+
+        .badge {
+            display: inline-block; padding: 3px 10px; border-radius: 12px;
+            font-size: 12px; font-weight: bold; margin-right: 4px;
+        }
+        .badge.done    { background: #e8f5e9; color: #2e7d32; }
+        .badge.pending { background: #fff3e0; color: #e65100; }
+        .badge.method  { background: #e3f2fd; color: #1565c0; }
+
+        .conclusion {
+            background: linear-gradient(135deg, #e8f5e9, #e3f2fd);
+            border-radius: 8px; padding: 25px; margin-top: 20px;
+        }
+        footer {
+            text-align: center; padding: 25px; color: #757575; font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Практична робота №7</h1>
+    <p>Технологія jQuery. Крок за кроком.</p>
+    <div class="meta">
+        Черкаський державний бізнес-коледж &nbsp;|&nbsp;
+        Дисципліна: Веб-програмування &nbsp;|&nbsp;
+        2025–2026 н.р.
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- Мета -->
+    <div class="card">
+        <h2>Мета роботи</h2>
+        <p>Набуття практичних навичок роботи з бібліотекою jQuery: підключення через CDN, робота із селекторами, фільтрами, масивами, функціями для роботи з масивами jQuery та JavaScript.</p>
+        <p><strong>Завдання від викладача:</strong> виконати практичні завдання тем 1–10 методички «Технологія jQuery. Крок за кроком.» (Куцевський С.М., Хотунов В.І.).</p>
+    </div>
+
+    <!-- Навігація -->
+    <div class="card">
+        <h2>Файли виконаних завдань</h2>
+        <div class="link-grid">
+            <a href="tema1.html" class="link-btn">Тема 1<br><small>Підключення CDN</small></a>
+            <a href="tema2.html" class="link-btn">Тема 2<br><small>Селектори</small></a>
+            <a href="tema3.html" class="link-btn">Тема 3<br><small>Фільтри</small></a>
+            <a href="tema4.html" class="link-btn">Тема 4<br><small>Масиви — makeArray/inArray/grep</small></a>
+            <a href="tema5.html" class="link-btn">Тема 5<br><small>map / merge / extend</small></a>
+            <a href="tema6.html"  class="link-btn">Тема 6<br><small>$.each / .each()</small></a>
+            <a href="tema7.html"  class="link-btn">Тема 7<br><small>Обробники подій</small></a>
+            <a href="tema8.html"  class="link-btn">Тема 8<br><small>Анімація — .hide/.show/.animate</small></a>
+            <a href="tema9.html"  class="link-btn">Тема 9<br><small>Зміна вмісту — .html/.text/.val</small></a>
+            <a href="tema10.html" class="link-btn">Тема 10<br><small>Атрибути — .attr/.prop/.removeAttr</small></a>
+        </div>
+    </div>
+
+    <!-- ===== ТЕМА 1 ===== -->
+    <div class="card">
+        <h2>Тема 1. Підключення jQuery та плагін jquery-confirm</h2>
+
+        <div class="task-block">
+            <strong>Завдання 1.</strong> Підключити jQuery до сторінки через Google CDN та перевірити коректність підключення.
+        </div>
+        <div class="task-block">
+            <strong>Завдання 2.</strong> Підключити плагін jquery-confirm і реалізувати діалогові вікна з кнопками.
+        </div>
+        <div class="task-block">
+            <strong>Завдання 3.</strong> Створити власний jQuery-плагін <code>$.fn.confirm</code> — підтвердження дій з кнопками «Так» / «Ні».
+        </div>
+
+        <h3>Підключення jQuery через Google CDN:</h3>
+        <pre><span class="kw">&lt;script</span> src=<span class="str">"https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"</span><span class="kw">&gt;&lt;/script&gt;</span></pre>
+
+        <h3>Підключення плагіну jquery-confirm:</h3>
+        <pre><span class="kw">&lt;link</span>   rel=<span class="str">"stylesheet"</span> href=<span class="str">"https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.css"</span><span class="kw">&gt;</span>
+<span class="kw">&lt;script</span> src=<span class="str">"https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js"</span><span class="kw">&gt;&lt;/script&gt;</span></pre>
+
+        <h3>Перевірка підключення jQuery:</h3>
+        <pre><span class="kw">if</span> (<span class="kw">typeof</span> jQuery !== <span class="str">'undefined'</span>) {
+    $(<span class="str">'#result'</span>).<span class="fn">text</span>(<span class="str">'jQuery v'</span> + $.<span class="fn">fn</span>.jquery + <span class="str">' підключено!'</span>);
+}</pre>
+
+        <h3>Власний плагін <code>$.fn.confirm</code> з <code>this.$target</code>:</h3>
+        <pre>$.<span class="fn">fn</span>.confirm = <span class="kw">function</span>(options) {
+    <span class="kw">var</span> $btn = <span class="kw">this</span>;
+    <span class="kw">var</span> settings = $.<span class="fn">extend</span>({ title: <span class="str">'Підтвердити?'</span>, message: <span class="str">''</span> }, options);
+    $btn.<span class="fn">on</span>(<span class="str">'click'</span>, <span class="kw">function</span>() {
+        $.<span class="fn">confirm</span>({
+            title: settings.title,
+            content: settings.message,
+            buttons: {
+                yes: { text: <span class="str">'Так'</span>, action: <span class="kw">function</span>() { settings.onYes &amp;&amp; settings.<span class="fn">onYes</span>($btn); } },
+                no:  { text: <span class="str">'Ні'</span>,  action: <span class="kw">function</span>() {} }
+            }
+        });
+    });
+    <span class="kw">return this</span>;
+};</pre>
+
+        <p><span class="badge done">✓ Виконано</span></p>
+    </div>
+
+    <!-- ===== ТЕМА 2 ===== -->
+    <div class="card">
+        <h2>Тема 2. jQuery Селектори</h2>
+
+        <div class="task-block green">
+            <strong>Завдання 1.</strong> Змінити стилі елементів через 5 типів селекторів: по id, по класу, дочірній, по атрибуту, по значенню атрибута.
+        </div>
+        <div class="task-block green">
+            <strong>Завдання 2.</strong> Застосувати різні типи селекторів для вибіркового форматування — кожне завдання одним рядком jQuery.
+        </div>
+
+        <h3>noConflict() та ланцюжок методів:</h3>
+        <p>Для демонстрації <code>noConflict()</code> використано <code>var jq = jQuery</code> (без реального виклику <code>$.noConflict()</code>, щоб не порушити решту коду). Ланцюжок методів дозволяє застосовувати декілька дій до одного елемента в один рядок.</p>
+        <pre><span class="cm">// Ланцюжок методів</span>
+$(<span class="str">'#chainDemo'</span>)
+    .<span class="fn">css</span>(<span class="str">'color'</span>, <span class="str">'white'</span>)
+    .<span class="fn">css</span>(<span class="str">'background'</span>, <span class="str">'#1976d2'</span>)
+    .<span class="fn">css</span>(<span class="str">'padding'</span>, <span class="str">'12px'</span>)
+    .<span class="fn">text</span>(<span class="str">'Стилі змінено одним ланцюжком jQuery!'</span>);</pre>
+
+        <h3>Завдання 1 — Типи селекторів:</h3>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Селектор</th><th>Команда jQuery</th><th>Результат</th></tr>
+                <tr><td>По id</td><td><code>$('#meadow')</code></td><td>зелений, 20px, жирний</td></tr>
+                <tr><td>По класу</td><td><code>$('.rainbow')</code></td><td>фіолетовий, 18px, рожевий фон</td></tr>
+                <tr><td>Дочірній</td><td><code>$('#fut #future')</code></td><td>помаранчевий, 20px, жовтий фон</td></tr>
+                <tr><td>Атрибут (наявність)</td><td><code>$('[set]')</code></td><td>синій, курсив, 18px</td></tr>
+                <tr><td>Атрибут = значення</td><td><code>$('[last="code"]')</code></td><td>червоний, 20px, підкреслений</td></tr>
+            </table>
+        </div>
+
+        <h3>Завдання 2 — Кожна команда одним рядком:</h3>
+        <pre><span class="cm">// 1. Зелений колір за id</span>
+$(<span class="str">'#pmtog'</span>).<span class="fn">css</span>(<span class="str">'color'</span>, <span class="str">'green'</span>);
+
+<span class="cm">// 2. Червоний лише для p.pr1 (не h3.pr1!)</span>
+$(<span class="str">'p.pr1'</span>).<span class="fn">css</span>(<span class="str">'color'</span>, <span class="str">'red'</span>);
+
+<span class="cm">// 3. Помаранчевий фон лише кнопці type="button"</span>
+$(<span class="str">'input[type="button"]'</span>).<span class="fn">css</span>(<span class="str">'background-color'</span>, <span class="str">'orange'</span>);
+
+<span class="cm">// 4–6. Синій для .pmb1, .pmb2, .pmb3</span>
+$(<span class="str">'.pmb1'</span>).<span class="fn">css</span>(<span class="str">'color'</span>, <span class="str">'blue'</span>);
+$(<span class="str">'.pmb2'</span>).<span class="fn">css</span>(<span class="str">'color'</span>, <span class="str">'blue'</span>);
+$(<span class="str">'.pmb3'</span>).<span class="fn">css</span>(<span class="str">'color'</span>, <span class="str">'blue'</span>);
+
+<span class="cm">// Коричневий тільки .pmtobr всередині #wrap1</span>
+$(<span class="str">'#wrap1 .pmtobr'</span>).<span class="fn">css</span>(<span class="str">'color'</span>, <span class="str">'brown'</span>);
+
+<span class="cm">// 6. Рамка навколо третього зображення (:eq(2) = індекс 2)</span>
+$(<span class="str">'img:eq(2)'</span>).<span class="fn">css</span>(<span class="str">'borderStyle'</span>, <span class="str">'solid'</span>);
+
+<span class="cm">// 7. Червоний для button і submit у #iwrap (text — не змінюється)</span>
+$(<span class="str">'#iwrap input[type="button"], #iwrap input[type="submit"]'</span>).<span class="fn">css</span>(<span class="str">'color'</span>, <span class="str">'red'</span>);</pre>
+
+        <p><span class="badge done">✓ Виконано</span></p>
+    </div>
+
+    <!-- ===== ТЕМА 3 ===== -->
+    <div class="card">
+        <h2>Тема 3. jQuery Фільтри та метод .filter()</h2>
+
+        <div class="task-block orange">
+            <strong>Практичне завдання.</strong> Застосувати метод <code>.filter()</code> до span-елементів (зокрема <code>span#first</code>, <code>span#second</code>, <code>span#city</code>) та елементів двох списків (<code>id="list"</code> та <code>id="two"</code>).
+        </div>
+
+        <h3>Таблиця 3.1 — Базові фільтри (9):</h3>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Фільтр</th><th>Опис</th></tr>
+                <tr><td><code>:eq(n)</code></td><td>Елемент з індексом n (з нуля)</td></tr>
+                <tr><td><code>:even</code></td><td>Парні індекси: 0, 2, 4…</td></tr>
+                <tr><td><code>:odd</code></td><td>Непарні індекси: 1, 3, 5…</td></tr>
+                <tr><td><code>:first</code></td><td>Перший елемент у вибірці</td></tr>
+                <tr><td><code>:last</code></td><td>Останній елемент у вибірці</td></tr>
+                <tr><td><code>:gt(n)</code></td><td>Елементи з індексом більшим за n</td></tr>
+                <tr><td><code>:lt(n)</code></td><td>Елементи з індексом меншим за n</td></tr>
+                <tr><td><code>:header</code></td><td>Заголовки: h1…h6</td></tr>
+                <tr><td><code>:not(selector)</code></td><td>Всі, крім зазначеного селектора</td></tr>
+            </table>
+        </div>
+
+        <h3>Таблиця 3.2 — Контентні фільтри (10):</h3>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Фільтр</th><th>Опис</th></tr>
+                <tr><td><code>:contains("текст")</code></td><td>Містить зазначений текст</td></tr>
+                <tr><td><code>:has(selector)</code></td><td>Містить елемент-нащадок</td></tr>
+                <tr><td><code>:empty</code></td><td>Без дочірніх вузлів та тексту</td></tr>
+                <tr><td><code>:first-child</code></td><td>Перший дочірній елемент батька</td></tr>
+                <tr><td><code>:last-child</code></td><td>Останній дочірній елемент батька</td></tr>
+                <tr><td><code>:nth-child(n)</code></td><td>n-й дочірній елемент (з одиниці)</td></tr>
+                <tr><td><code>:nth-child(even)</code></td><td>Парні дочірні елементи</td></tr>
+                <tr><td><code>:nth-child(odd)</code></td><td>Непарні дочірні елементи</td></tr>
+                <tr><td><code>:only-child</code></td><td>Єдиний дочірній елемент батька</td></tr>
+                <tr><td><code>:parent</code></td><td>Має хоча б один дочірній вузол</td></tr>
+            </table>
+        </div>
+
+        <h3>Таблиця 3.3 — Фільтри форм (15):</h3>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Фільтр</th><th>Опис</th></tr>
+                <tr><td><code>:button</code></td><td>Кнопки <code>type="button"</code> та <code>&lt;button&gt;</code></td></tr>
+                <tr><td><code>:checkbox</code></td><td>Поля <code>type="checkbox"</code></td></tr>
+                <tr><td><code>:checked</code></td><td>Відмічені checkbox/radio</td></tr>
+                <tr><td><code>:disabled</code></td><td>Заблоковані елементи</td></tr>
+                <tr><td><code>:enabled</code></td><td>Доступні (не disabled) елементи</td></tr>
+                <tr><td><code>:file</code></td><td>Поля <code>type="file"</code></td></tr>
+                <tr><td><code>:hidden</code></td><td>Приховані елементи</td></tr>
+                <tr><td><code>:input</code></td><td>Всі елементи форм: input, select, textarea, button</td></tr>
+                <tr><td><code>:password</code></td><td>Поля <code>type="password"</code></td></tr>
+                <tr><td><code>:radio</code></td><td>Поля <code>type="radio"</code></td></tr>
+                <tr><td><code>:reset</code></td><td>Кнопки <code>type="reset"</code></td></tr>
+                <tr><td><code>:selected</code></td><td>Вибрані option у select</td></tr>
+                <tr><td><code>:submit</code></td><td>Кнопки <code>type="submit"</code></td></tr>
+                <tr><td><code>:text</code></td><td>Поля <code>type="text"</code></td></tr>
+                <tr><td><code>:visible</code></td><td>Видимі елементи</td></tr>
+            </table>
+        </div>
+
+        <h3>4 варіанти методу .filter():</h3>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Варіант</th><th>Синтаксис</th><th>Приклад</th></tr>
+                <tr><td>Рядок-селектор</td><td><code>.filter(selector)</code></td><td><code>$('*').filter('span')</code></td></tr>
+                <tr><td>Функція</td><td><code>.filter(function(i, el){})</code></td><td><code>.filter(function(){ return $(this).text().length > 5; })</code></td></tr>
+                <tr><td>DOM-елемент</td><td><code>.filter(DOMelement)</code></td><td><code>.filter(document.getElementById('id'))</code></td></tr>
+                <tr><td>jQuery-об'єкт</td><td><code>.filter($set)</code></td><td><code>.filter($('#id'))</code></td></tr>
+            </table>
+        </div>
+
+        <h3>Практичне завдання — код:</h3>
+        <pre><span class="cm">// 1. Всі span → червоний текст, жовтий фон</span>
+$(<span class="str">'#task-area span'</span>).<span class="fn">css</span>({ <span class="str">'color'</span>: <span class="str">'red'</span>, <span class="str">'background-color'</span>: <span class="str">'yellow'</span> });
+
+<span class="cm">// 2. span#first → розмір 18px, підкреслений</span>
+$(<span class="str">'#task-area span'</span>).<span class="fn">filter</span>(<span class="str">'#first'</span>).<span class="fn">css</span>({ <span class="str">'font-size'</span>: <span class="str">'18px'</span>, <span class="str">'text-decoration'</span>: <span class="str">'underline'</span> });
+
+<span class="cm">// 3. span#second → розмір 16px, напівжирний</span>
+$(<span class="str">'#task-area span'</span>).<span class="fn">filter</span>(<span class="str">'#second'</span>).<span class="fn">css</span>({ <span class="str">'font-size'</span>: <span class="str">'16px'</span>, <span class="str">'font-weight'</span>: <span class="str">'bold'</span> });
+
+<span class="cm">// 4. span#city → розмір 20px, нахилений</span>
+$(<span class="str">'#task-area span'</span>).<span class="fn">filter</span>(<span class="str">'#city'</span>).<span class="fn">css</span>({ <span class="str">'font-size'</span>: <span class="str">'20px'</span>, <span class="str">'font-style'</span>: <span class="str">'italic'</span> });
+
+<span class="cm">// 5. Парні li у #list → зелений фон; перший і останній → жирний</span>
+$(<span class="str">'#list li'</span>).<span class="fn">filter</span>(<span class="str">':even'</span>).<span class="fn">css</span>(<span class="str">'background-color'</span>, <span class="str">'#c8e6c9'</span>);
+$(<span class="str">'#list li'</span>).<span class="fn">filter</span>(<span class="str">':first'</span>).<span class="fn">css</span>(<span class="str">'font-weight'</span>, <span class="str">'bold'</span>);
+$(<span class="str">'#list li'</span>).<span class="fn">filter</span>(<span class="str">':last'</span>).<span class="fn">css</span>(<span class="str">'font-weight'</span>, <span class="str">'bold'</span>);
+
+<span class="cm">// 6. Непарні li у #two → блакитний фон; перший і останній → жирний</span>
+$(<span class="str">'#two li'</span>).<span class="fn">filter</span>(<span class="str">':odd'</span>).<span class="fn">css</span>(<span class="str">'background-color'</span>, <span class="str">'#bbdefb'</span>);
+$(<span class="str">'#two li'</span>).<span class="fn">filter</span>(<span class="str">':first'</span>).<span class="fn">css</span>(<span class="str">'font-weight'</span>, <span class="str">'bold'</span>);
+$(<span class="str">'#two li'</span>).<span class="fn">filter</span>(<span class="str">':last'</span>).<span class="fn">css</span>(<span class="str">'font-weight'</span>, <span class="str">'bold'</span>);</pre>
+
+        <p><span class="badge done">✓ Виконано</span></p>
+    </div>
+
+    <!-- ===== ТЕМА 4 ===== -->
+    <div class="card">
+        <h2>Тема 4. Масиви в jQuery — $.makeArray, $.inArray, $.grep</h2>
+
+        <div class="task-block">
+            <strong>Завдання 1.</strong> Створити HTML-список групи студентів (поля «Прізвище», «Вік»), конвертувати у масив об'єктів через <code>$.makeArray()</code>, реалізувати кнопки сортування.
+        </div>
+        <div class="task-block">
+            <strong>Завдання 2.</strong> Ввести прізвище студента — визначити його порядковий номер у масиві через <code>$.inArray()</code>.
+        </div>
+        <div class="task-block">
+            <strong>Завдання 3.</strong> Список студентів з полями «Номер по списку», «Прізвище», «Вік» — фільтрація через <code>$.grep()</code>.
+        </div>
+
+        <h3>Порівняння методів:</h3>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Метод</th><th>Синтаксис</th><th>Призначення</th></tr>
+                <tr><td><code>$.makeArray()</code></td><td><code>$.makeArray(nodeList)</code></td><td>Конвертує NodeList (або будь-який масивоподібний об'єкт) у справжній масив JS</td></tr>
+                <tr><td><code>$.inArray()</code></td><td><code>$.inArray(value, array)</code></td><td>Повертає індекс першого збігу або <code>-1</code></td></tr>
+                <tr><td><code>$.grep()</code></td><td><code>$.grep(array, fn, [invert])</code></td><td>Фільтрує масив за умовою функції; третій аргумент <code>true</code> — інвертує</td></tr>
+            </table>
+        </div>
+
+        <h3>Завдання 1 — $.makeArray та сортування:</h3>
+        <pre><span class="cm">// Збираємо &lt;li&gt; у масив об'єктів</span>
+<span class="kw">var</span> liArr = $.<span class="fn">makeArray</span>($(<span class="str">'#studentList li'</span>));
+<span class="kw">var</span> students = liArr.<span class="fn">map</span>(<span class="kw">function</span>(el) {
+    <span class="kw">var</span> parts = $(el).<span class="fn">text</span>().<span class="fn">split</span>(<span class="str">' — '</span>);
+    <span class="kw">return</span> { surname: parts[<span class="num">0</span>], age: <span class="fn">parseInt</span>(parts[<span class="num">1</span>]) };
+});
+
+<span class="cm">// Сортування за прізвищем А→Я</span>
+students.<span class="fn">sort</span>(<span class="kw">function</span>(a, b) { <span class="kw">return</span> a.surname.<span class="fn">localeCompare</span>(b.surname, <span class="str">'uk'</span>); });</pre>
+
+        <h3>Завдання 2 — $.inArray:</h3>
+        <pre><span class="kw">var</span> surnameArr = students.<span class="fn">map</span>(<span class="kw">function</span>(s) { <span class="kw">return</span> s.surname; });
+<span class="kw">var</span> idx = $.<span class="fn">inArray</span>(inputSurname, surnameArr);
+<span class="kw">if</span> (idx !== -<span class="num">1</span>) {
+    <span class="cm">// Порядковий номер = idx + 1</span>
+    result = (idx + <span class="num">1</span>) + <span class="str">'. '</span> + students[idx].surname + <span class="str">', вік: '</span> + students[idx].age;
+}</pre>
+
+        <h3>Завдання 3 — $.grep (поле «Номер по списку»):</h3>
+        <pre><span class="cm">// Парні «Номер по списку»</span>
+$.<span class="fn">grep</span>(students3, <span class="kw">function</span>(s) { <span class="kw">return</span> s.num % <span class="num">2</span> === <span class="num">0</span>; });
+
+<span class="cm">// Непарні «Номер по списку»</span>
+$.<span class="fn">grep</span>(students3, <span class="kw">function</span>(s) { <span class="kw">return</span> s.num % <span class="num">2</span> !== <span class="num">0</span>; });
+
+<span class="cm">// Вік &gt; 21</span>
+$.<span class="fn">grep</span>(students3, <span class="kw">function</span>(s) { <span class="kw">return</span> s.age > <span class="num">21</span>; });
+
+<span class="cm">// Вік &lt; 21</span>
+$.<span class="fn">grep</span>(students3, <span class="kw">function</span>(s) { <span class="kw">return</span> s.age < <span class="num">21</span>; });
+
+<span class="cm">// Вік = 21</span>
+$.<span class="fn">grep</span>(students3, <span class="kw">function</span>(s) { <span class="kw">return</span> s.age === <span class="num">21</span>; });
+
+<span class="cm">// Довжина прізвища &gt; 7 символів</span>
+$.<span class="fn">grep</span>(students3, <span class="kw">function</span>(s) { <span class="kw">return</span> s.surname.<span class="fn">length</span> > <span class="num">7</span>; });</pre>
+
+        <p><span class="badge done">✓ Виконано</span></p>
+    </div>
+
+    <!-- ===== ТЕМА 5 ===== -->
+    <div class="card">
+        <h2>Тема 5. Масиви в jQuery — $.map, $.merge, $.extend, jQuery.unique()</h2>
+
+        <div class="task-block green">
+            <strong>Завдання 1.</strong> Дві групи студентів по 5 осіб (поля «Прізвище», «Вік») — об'єднати через <code>$.merge()</code>, відсортувати, вивести в таблицю.
+        </div>
+        <div class="task-block green">
+            <strong>Завдання 2.</strong> Через <code>$.map()</code> додати порядкові номери до відсортованого списку; через <code>$.grep()</code> показати парні/непарні; перетворити прізвища у верхній регістр.
+        </div>
+        <div class="task-block green">
+            <strong>Завдання 3.</strong> Два об'єкти з параметрами студента — порівняти поверхневе та глибоке <code>$.extend()</code>, вивести таблицю зі значеннями до та після злиття.
+        </div>
+
+        <h3>Порівняння методів теми 5:</h3>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Метод</th><th>Синтаксис</th><th>Призначення</th></tr>
+                <tr><td><code>$.map()</code></td><td><code>$.map(array, fn)</code></td><td>Перетворює кожен елемент масиву; повертає новий масив</td></tr>
+                <tr><td><code>$.merge()</code></td><td><code>$.merge(arr1, arr2)</code></td><td>Дописує елементи arr2 в кінець arr1 (змінює arr1)</td></tr>
+                <tr><td><code>$.extend()</code></td><td><code>$.extend([deep], target, obj…)</code></td><td>Копіює властивості об'єктів у target; deep=true — рекурсивне злиття</td></tr>
+                <tr><td><code>jQuery.unique()</code></td><td><code>jQuery.unique(array)</code></td><td>Видаляє дублікати DOM-елементів із масиву</td></tr>
+            </table>
+        </div>
+
+        <h3>Завдання 1 — $.merge та сортування:</h3>
+        <pre><span class="cm">// Об'єднання двох груп</span>
+<span class="kw">var</span> all = $.<span class="fn">merge</span>($.<span class="fn">merge</span>([], group1), group2);
+
+<span class="cm">// Сортування за прізвищем</span>
+all.<span class="fn">sort</span>(<span class="kw">function</span>(a, b) { <span class="kw">return</span> a.surname.<span class="fn">localeCompare</span>(b.surname, <span class="str">'uk'</span>); });
+
+<span class="cm">// Сортування за віком</span>
+all.<span class="fn">sort</span>(<span class="kw">function</span>(a, b) { <span class="kw">return</span> a.age - b.age; });</pre>
+
+        <h3>Завдання 2 — $.map з порядковими номерами:</h3>
+        <pre><span class="cm">// Додати порядковий номер кожному студенту</span>
+<span class="kw">var</span> numbered = $.<span class="fn">map</span>(all, <span class="kw">function</span>(s, i) {
+    <span class="kw">return</span> $.<span class="fn">extend</span>({}, s, { num: i + <span class="num">1</span> });
+});
+
+<span class="cm">// Студенти з парним порядковим номером</span>
+<span class="kw">var</span> even = $.<span class="fn">grep</span>(numbered, <span class="kw">function</span>(s) { <span class="kw">return</span> s.num % <span class="num">2</span> === <span class="num">0</span>; });
+
+<span class="cm">// Верхній регістр прізвищ</span>
+<span class="kw">var</span> upper = $.<span class="fn">map</span>(all, <span class="kw">function</span>(s) {
+    <span class="kw">return</span> $.<span class="fn">extend</span>({}, s, { surname: s.surname.<span class="fn">toUpperCase</span>() });
+});</pre>
+
+        <h3>Завдання 3 — поверхневе vs глибоке $.extend:</h3>
+        <pre><span class="cm">// Поверхневе злиття — вкладені об'єкти замінюються, а не зливаються</span>
+<span class="kw">var</span> shallow = $.<span class="fn">extend</span>({}, obj1, obj2);
+
+<span class="cm">// Глибоке злиття — рекурсивне об'єднання вкладених об'єктів</span>
+<span class="kw">var</span> deep = $.<span class="fn">extend</span>(<span class="kw">true</span>, {}, obj1, obj2);</pre>
+
+        <p><span class="badge done">✓ Виконано</span></p>
+    </div>
+
+    <!-- ===== ТЕМА 6 ===== -->
+    <div class="card">
+        <h2>Тема 6. Перебір масиву, об'єкта і елементів</h2>
+
+        <div class="table-wrap">
+            <table>
+                <tr><th>Сутність</th><th>Синтаксис</th><th>Призначення</th></tr>
+                <tr>
+                    <td><strong>$.each()</strong></td>
+                    <td><code>$.each(array|object, fn)</code></td>
+                    <td>Перебирає елементи масиву або властивості об'єкта</td>
+                </tr>
+                <tr>
+                    <td><strong>.each()</strong></td>
+                    <td><code>$(selector).each(fn)</code></td>
+                    <td>Цикл по набору DOM-елементів</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="task-block">
+            <strong>Завдання 1.</strong> Організувати цикл each за елементами DOM з класом <code>name</code> двома способами: <code>$.each($('.name'), fn)</code> та <code>$('.name').each(fn)</code>.
+        </div>
+        <pre>$.each($(<span class="str">'.name'</span>), <span class="kw">function</span>(index, element) {
+    console.<span class="fn">log</span>(<span class="str">'index: '</span> + index + <span class="str">',  text: '</span> + $(element).<span class="fn">text</span>());
+});
+
+$(<span class="str">'.name'</span>).<span class="fn">each</span>(<span class="kw">function</span>(index, element) {
+    console.<span class="fn">log</span>(<span class="str">'index: '</span> + index + <span class="str">',  text: '</span> + $(element).<span class="fn">text</span>());
+});</pre>
+
+        <div class="task-block green">
+            <strong>Завдання 2.</strong> Перебрати дочірні елементи <code>ul#myList</code>: HTML, CSS, JavaScript.
+        </div>
+        <pre>$(<span class="str">'#myList'</span>).<span class="fn">children</span>().<span class="fn">each</span>(<span class="kw">function</span>(index, element) {
+    console.<span class="fn">log</span>(<span class="str">'index: '</span> + index + <span class="str">',  text: '</span> + $(element).<span class="fn">text</span>());
+});</pre>
+
+        <div class="task-block orange">
+            <strong>Завдання 3.</strong> Визначити останній індекс та останній елемент у колекції <code>div.name</code>.
+        </div>
+        <pre><span class="kw">var</span> lastIndex = -<span class="num">1</span>, lastText = <span class="str">''</span>;
+$(<span class="str">'div.name'</span>).<span class="fn">each</span>(<span class="kw">function</span>(index) {
+    lastIndex = index;
+    lastText  = $(<span class="kw">this</span>).<span class="fn">text</span>();
+});</pre>
+
+        <p><span class="badge done">✓ Виконано</span></p>
+    </div>
+
+    <!-- ===== ТЕМА 7 ===== -->
+    <div class="card">
+        <h2>Тема 7. Обробники подій jQuery</h2>
+
+        <div class="table-wrap">
+            <table>
+                <tr><th>Метод</th><th>Призначення</th></tr>
+                <tr><td><code>.on(event, [selector,] fn)</code></td><td>Призначення обробника (з підтримкою делегування)</td></tr>
+                <tr><td><code>.off(event, fn)</code></td><td>Видалення обробника</td></tr>
+                <tr><td><code>.one(event, fn)</code></td><td>Обробник виконується лише один раз</td></tr>
+                <tr><td><code>.trigger(event)</code></td><td>Програмний виклик події</td></tr>
+                <tr><td><code>.click() .dblclick()</code></td><td>Скорочені методи для подій кліку</td></tr>
+                <tr><td><code>.mouseenter() .mouseleave() .hover()</code></td><td>Скорочені методи для подій миші</td></tr>
+                <tr><td><code>.focus() .blur() .keydown()</code></td><td>Скорочені методи для клавіатури / фокуса</td></tr>
+            </table>
+        </div>
+
+        <div class="task-block">
+            <strong>Завдання 1–7.</strong> Обробники через індивідуальні методи: <code>.click()</code>, <code>.mouseenter()</code>, <code>.blur()</code>, <code>.one()</code>, заміна вмісту, подвійний клік.
+        </div>
+        <div class="task-block green">
+            <strong>Делегування подій.</strong> <code>$(parent).on('event', 'child', fn)</code> — працює для динамічно доданих елементів.
+        </div>
+        <pre>$(<span class="str">'#delList'</span>).<span class="fn">on</span>(<span class="str">'click'</span>, <span class="str">'li'</span>, <span class="kw">function</span>() {
+    $(<span class="kw">this</span>).<span class="fn">text</span>($(<span class="kw">this</span>).<span class="fn">text</span>() + <span class="str">'!'</span>);
+});
+
+$(<span class="str">'#usersTable'</span>).<span class="fn">on</span>(<span class="str">'click'</span>, <span class="str">'td'</span>, <span class="kw">function</span>() {
+    <span class="kw">var</span> newText = <span class="fn">prompt</span>(<span class="str">'Змініть текст:'</span>, $(<span class="kw">this</span>).<span class="fn">text</span>());
+    <span class="kw">if</span> (newText !== <span class="kw">null</span>) $(<span class="kw">this</span>).<span class="fn">text</span>(newText);
+});</pre>
+
+        <p><span class="badge done">✓ Виконано</span></p>
+    </div>
+
+    <!-- ===== ТЕМА 8 ===== -->
+    <div class="card">
+        <h2>Тема 8. Анімація в jQuery</h2>
+
+        <div class="table-wrap">
+            <table>
+                <tr><th>Метод</th><th>Опис</th></tr>
+                <tr><td><code>.hide([duration])</code></td><td>Приховує елемент (встановлює <code>display:none</code>)</td></tr>
+                <tr><td><code>.show([duration])</code></td><td>Показує прихований елемент</td></tr>
+                <tr><td><code>.toggle([duration])</code></td><td>Перемикає між show/hide</td></tr>
+                <tr><td><code>.fadeIn(duration)</code></td><td>Плавна поява (opacity 0→1)</td></tr>
+                <tr><td><code>.fadeOut(duration)</code></td><td>Плавне зникнення (opacity 1→0, потім display:none)</td></tr>
+                <tr><td><code>.fadeTo(duration, opacity)</code></td><td>Зміна прозорості до конкретного значення без приховування</td></tr>
+                <tr><td><code>.animate(props, duration)</code></td><td>Анімація числових CSS-властивостей</td></tr>
+            </table>
+        </div>
+
+        <div class="task-block">
+            <strong>Завдання 1.</strong> <code>#but1</code> → <code>$('#par1').hide()</code>; <code>#but2</code> → <code>$('#par1').show()</code>.
+        </div>
+        <div class="task-block green">
+            <strong>Завдання 2.</strong> Hover на <code>#par2</code> → <code>fadeTo(3000, 0.3)</code>; mouseleave → <code>fadeTo(1000, 1)</code>.
+        </div>
+        <div class="task-block orange">
+            <strong>Завдання 3.</strong> <code>#but3</code> → animate висота <code>#wrap1</code> до 0 за 5 с; <code>#but4</code> → відновити за 7 с.
+        </div>
+        <div class="task-block purple">
+            <strong>Завдання 4.</strong> <code>#but5</code> → червоний квадрат послідовно рухається по 5 чорних квадратах з цифрами через чергу <code>.animate()</code>.
+        </div>
+        <pre><span class="cm">// Завдання 1</span>
+$(<span class="str">'#but1'</span>).<span class="fn">click</span>(<span class="kw">function</span>() { $(<span class="str">'#par1'</span>).<span class="fn">hide</span>(<span class="num">400</span>); });
+$(<span class="str">'#but2'</span>).<span class="fn">click</span>(<span class="kw">function</span>() { $(<span class="str">'#par1'</span>).<span class="fn">show</span>(<span class="num">400</span>); });
+
+<span class="cm">// Завдання 2</span>
+$(<span class="str">'#par2'</span>).<span class="fn">mouseenter</span>(<span class="kw">function</span>() { $(<span class="kw">this</span>).<span class="fn">fadeTo</span>(<span class="num">3000</span>, <span class="num">0.3</span>); });
+$(<span class="str">'#par2'</span>).<span class="fn">mouseleave</span>(<span class="kw">function</span>() { $(<span class="kw">this</span>).<span class="fn">fadeTo</span>(<span class="num">1000</span>, <span class="num">1</span>); });
+
+<span class="cm">// Завдання 3</span>
+<span class="kw">var</span> wrap1Height = $(<span class="str">'#wrap1'</span>).<span class="fn">height</span>();
+$(<span class="str">'#but3'</span>).<span class="fn">click</span>(<span class="kw">function</span>() { $(<span class="str">'#wrap1'</span>).<span class="fn">animate</span>({ height: <span class="num">0</span> }, <span class="num">5000</span>); });
+$(<span class="str">'#but4'</span>).<span class="fn">click</span>(<span class="kw">function</span>() { $(<span class="str">'#wrap1'</span>).<span class="fn">animate</span>({ height: wrap1Height }, <span class="num">7000</span>); });
+
+<span class="cm">// Завдання 4</span>
+$(<span class="str">'#but5'</span>).<span class="fn">click</span>(<span class="kw">function</span>() {
+    <span class="kw">var</span> positions = [];
+    $(<span class="str">'.black-sq'</span>).<span class="fn">each</span>(<span class="kw">function</span>() { positions.<span class="fn">push</span>($(<span class="kw">this</span>).<span class="fn">position</span>().left); });
+    <span class="kw">var</span> $red = $(<span class="str">'#redSq'</span>);
+    $red.<span class="fn">stop</span>(<span class="kw">true</span>, <span class="kw">true</span>).<span class="fn">css</span>(<span class="str">'left'</span>, <span class="num">0</span>);
+    <span class="kw">var</span> chain = $red.<span class="fn">animate</span>({ left: positions[<span class="num">0</span>] }, <span class="num">600</span>);
+    <span class="kw">for</span> (<span class="kw">var</span> i = <span class="num">1</span>; i &lt; positions.length; i++) {
+        chain = chain.<span class="fn">animate</span>({ left: positions[i] }, <span class="num">600</span>);
+    }
+});</pre>
+
+        <p><span class="badge done">✓ Виконано</span></p>
+    </div>
+
+    <!-- ===== ТЕМА 9 ===== -->
+    <div class="card">
+        <h2>Тема 9. Зміна вмісту елементів. Методи .html(), .text(), .val()</h2>
+
+        <div class="table-wrap">
+            <table>
+                <tr><th>Метод</th><th>Getter</th><th>Setter</th><th>Призначення</th></tr>
+                <tr>
+                    <td><code>.html()</code></td>
+                    <td>Повертає HTML-вміст з тегами</td>
+                    <td>Вставляє HTML як розмітку</td>
+                    <td>Зміна внутрішньої структури DOM</td>
+                </tr>
+                <tr>
+                    <td><code>.text()</code></td>
+                    <td>Повертає лише текст (без тегів)</td>
+                    <td>Встановлює текст (теги екрануються)</td>
+                    <td>Безпечна зміна текстового вмісту</td>
+                </tr>
+                <tr>
+                    <td><code>.val()</code></td>
+                    <td>Повертає значення <code>value</code></td>
+                    <td>Встановлює <code>value</code> або вибирає елементи</td>
+                    <td>Робота з елементами форм</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="task-block">
+            <strong>Завдання 1.</strong> <code>.html()</code>: кнопки <code>#but1</code>/<code>#but2</code> змінюють текст абзаців <code>#par1</code>/<code>#par2</code>; кнопки <code>#but3</code>/<code>#but4</code> читають поточний вміст через <code>.html()</code>.
+        </div>
+        <pre>$(<span class="str">'#but1'</span>).<span class="fn">click</span>(<span class="kw">function</span>() {
+    $(<span class="str">'#par1'</span>).<span class="fn">html</span>(<span class="str">'jQuery — це JavaScript бібліотека...'</span>);
+});
+$(<span class="str">'#but3'</span>).<span class="fn">click</span>(<span class="kw">function</span>() {
+    console.<span class="fn">log</span>($(<span class="str">'#par1'</span>).<span class="fn">html</span>());
+});</pre>
+
+        <div class="task-block green">
+            <strong>Завдання 2.</strong> <code>.text()</code>: за кліком замінити текст усіх <code>&lt;p&gt;Yes&lt;/p&gt;</code> на «No» та вставити «Так / Ні» у <code>&lt;span&gt;</code>.
+        </div>
+        <pre>$(<span class="str">'#btn2'</span>).<span class="fn">click</span>(<span class="kw">function</span>() {
+    $(<span class="str">'#task2-area p'</span>).<span class="fn">text</span>(<span class="str">'No'</span>);
+    $(<span class="str">'#task2-area span'</span>).<span class="fn">text</span>(<span class="str">'Так / Ні'</span>);
+});</pre>
+
+        <div class="task-block orange">
+            <strong>Завдання 3.</strong> <code>.val()</code>: змінити текстові поля в <code>.firstTest</code>, відмітити чекбокси/radio у <code>.secondTest</code>, вибрати опції в <code>&lt;select multiple&gt;</code>.
+        </div>
+        <pre><span class="cm">// Текстові поля</span>
+inputs.<span class="fn">eq</span>(<span class="num">0</span>).<span class="fn">val</span>(<span class="str">'changedFirst'</span>);
+inputs.<span class="fn">eq</span>(<span class="num">1</span>).<span class="fn">val</span>(<span class="str">'changedSecond'</span>);
+
+<span class="cm">// Чекбокси — масив значень</span>
+$(<span class="str">'[name="checkboxname"]'</span>).<span class="fn">val</span>([<span class="str">'check1'</span>, <span class="str">'check2'</span>]);
+
+<span class="cm">// Radio</span>
+$(<span class="str">'[name="radio"]'</span>).<span class="fn">val</span>([<span class="str">'radio2'</span>]);
+
+<span class="cm">// Select multiple</span>
+$(<span class="str">'select'</span>).<span class="fn">val</span>([<span class="str">'Option2'</span>, <span class="str">'Option4'</span>]);</pre>
+
+        <p><span class="badge done">✓ Виконано</span></p>
+    </div>
+
+    <!-- ===== ТЕМА 10 ===== -->
+    <div class="card">
+        <h2>Тема 10. Методи jQuery для виконання операцій над атрибутами</h2>
+
+        <div class="table-wrap">
+            <table>
+                <tr><th>Метод</th><th>Режим</th><th>Опис</th></tr>
+                <tr>
+                    <td><code>.attr(name)</code></td>
+                    <td>Getter</td>
+                    <td>Повертає значення атрибута першого елемента</td>
+                </tr>
+                <tr>
+                    <td><code>.attr(name, value)</code></td>
+                    <td>Setter</td>
+                    <td>Встановлює атрибут для всіх елементів набору</td>
+                </tr>
+                <tr>
+                    <td><code>.attr({name: val, ...})</code></td>
+                    <td>Setter (obj)</td>
+                    <td>Встановлює кілька атрибутів одразу</td>
+                </tr>
+                <tr>
+                    <td><code>.attr(name, fn)</code></td>
+                    <td>Setter (fn)</td>
+                    <td>Встановлює атрибут через функцію (i, currentVal)</td>
+                </tr>
+                <tr>
+                    <td><code>.removeAttr(name)</code></td>
+                    <td>Remove</td>
+                    <td>Видаляє атрибут</td>
+                </tr>
+                <tr>
+                    <td><code>.prop(name, true|false)</code></td>
+                    <td>Setter</td>
+                    <td><code>true</code> — встановлює, <code>false</code> — видаляє (для булевих атрибутів)</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="task-block">
+            <strong>Завдання 1.</strong> Отримати <code>alt</code> першого зображення через <code>.attr('alt')</code> та встановити його як <code>title</code>.
+        </div>
+        <pre><span class="kw">var</span> altValue = $(<span class="str">'img.demo-img:first'</span>).<span class="fn">attr</span>(<span class="str">'alt'</span>);
+$(<span class="str">'img.demo-img:first'</span>).<span class="fn">attr</span>(<span class="str">'title'</span>, altValue);</pre>
+
+        <div class="task-block green">
+            <strong>Завдання 2.</strong> Додати <code>alt</code> і <code>title</code> першому зображенню через об'єктний синтаксис <code>.attr({})</code>.
+        </div>
+        <pre>$(<span class="str">'img.demo-img:first'</span>).<span class="fn">attr</span>({ <span class="str">'alt'</span>: <span class="str">'Зображення ноутбука'</span>, <span class="str">'title'</span>: <span class="str">'Сучасний ноутбук'</span> });</pre>
+
+        <div class="task-block orange">
+            <strong>Завдання 3.</strong> Встановити <code>alt</code> і <code>title</code> для першого зображення ланцюговим викликом.
+        </div>
+        <pre>$(<span class="str">'img.demo-img:first'</span>).<span class="fn">attr</span>(<span class="str">'alt'</span>, <span class="str">'Портативний комп\'ютер'</span>)
+                         .<span class="fn">attr</span>(<span class="str">'title'</span>, <span class="str">'Зображення 1 — Портативний комп\'ютер'</span>);</pre>
+
+        <div class="task-block purple">
+            <strong>Завдання 4.</strong> Встановити <code>title = alt</code> для кожного зображення через функціональний синтаксис.
+        </div>
+        <pre>$(<span class="str">'img.demo-img'</span>).<span class="fn">attr</span>(<span class="str">'title'</span>, <span class="kw">function</span>(i) {
+    <span class="kw">return</span> $(<span class="kw">this</span>).<span class="fn">attr</span>(<span class="str">'alt'</span>);
+});</pre>
+
+        <p><span class="badge done">✓ Виконано</span></p>
+    </div>
+
+    <!-- Висновки -->
+    <div class="conclusion">
+        <h2 style="color:#1b5e20; margin-bottom:15px;">Висновки (Теми 1–10)</h2>
+        <p style="line-height:1.8; margin-bottom:12px;">
+            У ході виконання практичних завдань тем 1–10 опановано основи роботи з бібліотекою jQuery.
+            Підключення через Google CDN та jquery-confirm плагін (Тема 1) показало зручність
+            використання готових компонентів. Власний плагін <code>$.fn.confirm</code> продемонстрував
+            механізм розширення jQuery.
+        </p>
+        <p style="line-height:1.8; margin-bottom:12px;">
+            Теми 2–3 охопили роботу з селекторами (по id, класу, атрибутах, дочірні) та фільтрами
+            (9 базових, 10 контентних, 15 фільтрів форм). Метод <code>.filter()</code> дозволяє
+            звужувати вибірку за будь-яким критерієм: рядком-селектором, функцією, DOM-елементом
+            або jQuery-об'єктом.
+        </p>
+        <p style="line-height:1.8; margin-bottom:12px;">
+            Теми 4–5 охопили роботу з масивами: <code>$.makeArray()</code> конвертує NodeList у
+            звичайний масив, <code>$.inArray()</code> шукає елемент, <code>$.grep()</code> фільтрує
+            за умовою, <code>$.map()</code> трансформує, <code>$.merge()</code> об'єднує масиви,
+            а <code>$.extend()</code> зливає об'єкти — поверхнево або рекурсивно.
+        </p>
+        <p style="line-height:1.8; margin-bottom:12px;">
+            Тема 6 закріпила роботу з <code>$.each()</code> та <code>.each()</code> — перебір масивів,
+            об'єктів та DOM-елементів. Тема 7 охопила систему обробки подій: методи <code>.on()</code>,
+            <code>.off()</code>, <code>.one()</code>, скорочені обробники та делегування подій для
+            динамічно доданих елементів. Тема 8 — анімація: методи <code>.hide()</code>, <code>.show()</code>,
+            <code>.fadeTo()</code> та гнучкий <code>.animate()</code> з чергою анімацій.
+        </p>
+        <p style="line-height:1.8; margin-bottom:12px;">
+            Тема 9 охопила зміну вмісту елементів: <code>.html()</code> для вставки HTML-розмітки,
+            <code>.text()</code> для безпечної роботи з текстом (з автоматичним екрануванням тегів),
+            та <code>.val()</code> для роботи з елементами форм — текстовими полями, чекбоксами,
+            радіо-кнопками та випадаючими списками з множинним вибором.
+        </p>
+        <p style="line-height:1.8; margin-bottom:12px;">
+            Тема 10 завершила вивчення методичного курсу: <code>.attr()</code> для читання та зміни
+            HTML-атрибутів (в т.ч. об'єктний синтаксис і функціональний синтаксис для масових операцій),
+            <code>.removeAttr()</code> для видалення атрибутів, та <code>.prop()</code> для роботи
+            з булевими DOM-властивостями (<code>disabled</code>, <code>checked</code>, <code>selected</code>).
+        </p>
+        <p style="line-height:1.8;">
+            <span class="badge done">Виконано: всі 10 тем</span>
+        </p>
+    </div>
+
+</div>
+
+<footer>
+    Практична робота №7 &mdash; jQuery &mdash; Черкаський державний бізнес-коледж &mdash; 2025–2026
+</footer>
+
+</body>
+</html>

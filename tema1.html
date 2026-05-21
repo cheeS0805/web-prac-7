@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тема 1 — jQuery. Базові налаштування та поняття</title>
+
+    <!-- Завдання 1.1: підключення jQuery через Google CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- Плагін jquery-confirm: CSS + JS з офіційного сайту craftpip.github.io/jquery-confirm -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js"></script>
+
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background: #f9f9f9; }
+        h1 { color: #1a237e; }
+        h2 { color: #283593; border-left: 4px solid #3949ab; padding-left: 10px; }
+        h3 { color: #37474f; }
+        .section { background: white; border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .result-box { background: #f1f8e9; border: 1px solid #aed581; padding: 10px 14px; border-radius: 5px; margin-top: 10px; min-height: 30px; }
+        button { padding: 9px 20px; margin: 5px; cursor: pointer; border: none; border-radius: 5px; font-size: 14px; font-weight: bold; }
+        .btn-blue   { background: #1976d2; color: white; }
+        .btn-green  { background: #388e3c; color: white; }
+        .btn-red    { background: #c62828; color: white; }
+        .btn-orange { background: #e65100; color: white; }
+        .btn-purple { background: #6a1b9a; color: white; }
+        .btn-teal   { background: #00695c; color: white; }
+        button:hover { opacity: 0.85; }
+        code { background: #263238; color: #80cbc4; padding: 2px 7px; border-radius: 3px; font-family: monospace; font-size: 13px; }
+        .link-confirm { color: #1976d2; cursor: pointer; text-decoration: underline; font-size: 15px; margin: 5px; display: inline-block; }
+        a.confirm-link { color: #c62828; font-weight: bold; font-size: 15px; margin: 5px; }
+        .info { background: #e3f2fd; border-left: 3px solid #1976d2; padding: 8px 12px; margin: 8px 0; border-radius: 0 5px 5px 0; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <h1>Тема 1. jQuery — базові налаштування та поняття</h1>
+
+    <!-- ============ Завдання 1.1 ============ -->
+    <div class="section">
+        <h2>Завдання 1.1 — Підключення jQuery через Google CDN</h2>
+        <p>На сторінці заданий jQuery код, але він не працює, тому що не підключений файл бібліотеки.
+           Підключіть <code>jquery.js</code> віддалено (скориставшись послугою Google).</p>
+
+        <p><strong>Рішення — додати в <code>&lt;head&gt;</code>:</strong></p>
+        <p><code>&lt;script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"&gt;&lt;/script&gt;</code></p>
+
+        <div class="result-box">
+            <strong>Перевірка підключення:</strong> <span id="check" style="color:gray">...</span>
+        </div>
+    </div>
+
+    <!-- ============ Стандартні браузерні діалоги ============ -->
+    <div class="section">
+        <h2>Взаємодія: alert(), prompt(), confirm()</h2>
+        <p>Розглянемо три стандартні функції браузера для взаємодії з користувачем:</p>
+
+        <h3>alert() — показує повідомлення</h3>
+        <div class="info">Синтаксис: <code>alert("повідомлення");</code> — зупиняє виконання скриптів до натискання OK.</div>
+        <button class="btn-blue" id="btnNativeAlert">Викликати alert()</button>
+
+        <h3>prompt() — запитує введення тексту</h3>
+        <div class="info">Синтаксис: <code>prompt("текст", "значення за замовчуванням");</code> — повертає рядок або null.</div>
+        <button class="btn-orange" id="btnNativePrompt">Викликати prompt()</button>
+        <div class="result-box" id="promptNativeResult">Результат prompt() буде тут</div>
+
+        <h3>confirm() — запитує підтвердження (OK / Скасування)</h3>
+        <div class="info">Синтаксис: <code>confirm("питання");</code> — повертає <code>true</code> або <code>false</code>.</div>
+        <button class="btn-green" id="btnNativeConfirm">Викликати confirm()</button>
+        <div class="result-box" id="confirmNativeResult">Результат confirm() буде тут</div>
+    </div>
+
+    <!-- ============ Підключення jquery-confirm ============ -->
+    <div class="section">
+        <h2>Підключення плагіну jquery-confirm</h2>
+        <p>Офіційний сайт: <code>https://craftpip.github.io/jquery-confirm</code></p>
+        <p>Плагін замінює стандартні модальні вікна на стилізовані. Підключення (Рис. 1.10):</p>
+
+        <p><code>&lt;link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.css"&gt;</code></p>
+        <p><code>&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js"&gt;&lt;/script&gt;</code></p>
+
+        <div class="info">
+            <strong>$.alert()</strong> — додає одну кнопку (OK), якщо кнопки не вказані.<br>
+            <strong>$.confirm()</strong> — якщо кнопки не вказані, будуть додані дві (Okay &amp; Cancel).
+        </div>
+    </div>
+
+    <!-- ============ $.alert() та $.confirm() ============ -->
+    <div class="section">
+        <h2>Демонстрація: $.alert() та $.confirm()</h2>
+
+        <h3>1. $.alert() — стилізований alert</h3>
+        <button class="btn-blue" id="btnAlert">Відкрити $.alert()</button>
+
+        <h3>2. $.confirm() — стилізований confirm (Так / Ні)</h3>
+        <button class="btn-green" id="btnConfirm">Відкрити $.confirm()</button>
+        <div class="result-box" id="confirmResult">Результат буде тут</div>
+
+        <h3>3. $.confirm() з полем введення — аналог prompt()</h3>
+        <button class="btn-orange" id="btnPrompt">Відкрити prompt через $.confirm()</button>
+        <div class="result-box" id="promptResult">Результат буде тут</div>
+
+        <h3>4. $.confirm() з кількома кнопками вибору</h3>
+        <button class="btn-red" id="btnMulti">Відкрити вікно вибору</button>
+        <div class="result-box" id="multiResult">Результат буде тут</div>
+    </div>
+
+    <!-- ============ Показ підказки з формою ============ -->
+    <div class="section">
+        <h2>Показ підказки за допомогою підтвердження</h2>
+        <p>Просто додайте форму до вмісту і зв'яжіть потрібні події. Ця форма також може бути завантажена через Ajax.</p>
+
+        <button class="btn-purple" id="btnFormModal">Відкрити форму у модальному вікні</button>
+        <div class="result-box" id="formResult">Результат форми буде тут</div>
+    </div>
+
+    <!-- ============ $.fn.confirm() — пряма прив'язка до елемента ============ -->
+    <div class="section">
+        <h2>$.fn.confirm() — пряма прив'язка до елемента (Рис. 1.11)</h2>
+        <p>Можна використовувати безпосередньо для прив'язки до елемента.
+           При кліку на елемент відкривається вікно підтвердження.
+           Всередині обробника доступний <code>this.$target</code> — елемент, на який натиснули.</p>
+
+        <div class="info">Якщо жодна кнопка не визначена — будуть додані кнопки за замовчуванням (Okay та Cancel).
+        Для посилань дія за замовчуванням — перехід на href.</div>
+
+        <!-- Прив'язка до кнопки -->
+        <button class="btn-teal confirm-btn"
+                data-title="Підтвердження дії"
+                data-content="Ви натиснули кнопку. Продовжити?">
+            Кнопка з $.fn.confirm()
+        </button>
+
+        <!-- Прив'язка до посилання -->
+        <a href="#" class="confirm-link"
+           data-title="Підтвердження переходу"
+           data-content="Ви хочете перейти за посиланням?">
+            Посилання з $.fn.confirm()
+        </a>
+
+        <div class="result-box" id="fnConfirmResult">Результат $.fn.confirm() буде тут</div>
+
+        <h3>this.$target — отримати елемент, на який натиснули</h3>
+        <button class="btn-blue target-btn" data-name="Кнопка A">Кнопка A</button>
+        <button class="btn-orange target-btn" data-name="Кнопка B">Кнопка B</button>
+        <button class="btn-red target-btn" data-name="Кнопка C">Кнопка C</button>
+        <div class="result-box" id="targetResult">Натисни будь-яку кнопку вище — через this.$target отримаємо її data-name</div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+
+            // ===== Перевірка jQuery =====
+            $('#check').text('jQuery v' + $.fn.jquery + ' підключено успішно!').css('color', 'green');
+
+
+            // ===== Стандартні браузерні діалоги =====
+
+            $('#btnNativeAlert').click(function () {
+                alert('Це стандартне вікно alert().\nВоно зупиняє виконання скриптів до натискання OK.');
+            });
+
+            $('#btnNativePrompt').click(function () {
+                var result = prompt('Введіть ваше ім\'я:', 'Іван');
+                if (result !== null) {
+                    $('#promptNativeResult').text('Ви ввели: "' + result + '"');
+                } else {
+                    $('#promptNativeResult').text('Натиснуто "Скасувати" — повернуто null');
+                }
+            });
+
+            $('#btnNativeConfirm').click(function () {
+                var result = confirm('Ви підтверджуєте дію?');
+                if (result) {
+                    $('#confirmNativeResult').text('Повернуто: true (натиснуто OK)').css('color', 'green');
+                } else {
+                    $('#confirmNativeResult').text('Повернуто: false (натиснуто Скасувати або Esc)').css('color', 'red');
+                }
+            });
+
+
+            // ===== $.alert() =====
+            $('#btnAlert').click(function () {
+                $.alert({
+                    title: 'Повідомлення!',
+                    content: 'Це стилізований <strong>alert()</strong> від jquery-confirm.<br>Кнопка OK додається автоматично.',
+                    type: 'blue'
+                });
+            });
+
+
+            // ===== $.confirm() =====
+            $('#btnConfirm').click(function () {
+                $.confirm({
+                    title: 'Підтвердження',
+                    content: 'Ви впевнені, що хочете продовжити?',
+                    type: 'green',
+                    buttons: {
+                        yes: {
+                            text: 'Так',
+                            btnClass: 'btn-success',
+                            action: function () {
+                                $('#confirmResult').text('Повернуто: true (Так)').css('color', 'green');
+                            }
+                        },
+                        no: {
+                            text: 'Ні',
+                            btnClass: 'btn-danger',
+                            action: function () {
+                                $('#confirmResult').text('Повернуто: false (Ні)').css('color', 'red');
+                            }
+                        }
+                    }
+                });
+            });
+
+
+            // ===== prompt через $.confirm() =====
+            $('#btnPrompt').click(function () {
+                $.confirm({
+                    title: 'Введіть ваше ім\'я',
+                    content: '<input type="text" id="promptInput" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;" placeholder="Ваше ім\'я...">',
+                    type: 'orange',
+                    onContentReady: function () {
+                        $('#promptInput').focus();
+                    },
+                    buttons: {
+                        ok: {
+                            text: 'OK',
+                            btnClass: 'btn-warning',
+                            action: function () {
+                                var val = $('#promptInput').val();
+                                $('#promptResult').text(val ? 'Введено: "' + val + '"' : '(порожньо — аналог null)');
+                            }
+                        },
+                        cancel: { text: 'Скасувати' }
+                    }
+                });
+            });
+
+
+            // ===== Кілька кнопок =====
+            $('#btnMulti').click(function () {
+                $.confirm({
+                    title: 'Оберіть технологію',
+                    content: 'Яка ваша улюблена веб-технологія?',
+                    type: 'red',
+                    buttons: {
+                        jquery:      { text: 'jQuery',     btnClass: 'btn-info',    action: function () { $('#multiResult').text('Обрано: jQuery').css('color','#0288d1'); } },
+                        javascript:  { text: 'JavaScript', btnClass: 'btn-warning', action: function () { $('#multiResult').text('Обрано: JavaScript').css('color','#f57c00'); } },
+                        cancel:      { text: 'Скасувати' }
+                    }
+                });
+            });
+
+
+            // ===== Форма всередині (Показ підказки за допомогою підтвердження) =====
+            $('#btnFormModal').click(function () {
+                $.confirm({
+                    title: 'Реєстрація студента',
+                    columnClass: 'medium',
+                    content: function () {
+                        // Форма може бути завантажена через Ajax — тут inline-варіант
+                        return '' +
+                            '<form id="modalForm">' +
+                            '  <div style="margin-bottom:12px;">' +
+                            '    <label style="font-weight:bold">Ім\'я:</label><br>' +
+                            '    <input type="text" id="fName" style="width:100%;padding:7px;border:1px solid #ccc;border-radius:4px;margin-top:4px;" placeholder="Введіть ім\'я">' +
+                            '    <small id="fNameErr" style="color:red;display:none">Поле обов\'язкове</small>' +
+                            '  </div>' +
+                            '  <div style="margin-bottom:12px;">' +
+                            '    <label style="font-weight:bold">Email:</label><br>' +
+                            '    <input type="email" id="fEmail" style="width:100%;padding:7px;border:1px solid #ccc;border-radius:4px;margin-top:4px;" placeholder="example@mail.com">' +
+                            '    <small id="fEmailErr" style="color:red;display:none">Введіть коректний email</small>' +
+                            '  </div>' +
+                            '  <div>' +
+                            '    <label style="font-weight:bold">Група:</label><br>' +
+                            '    <select id="fGroup" style="width:100%;padding:7px;border:1px solid #ccc;border-radius:4px;margin-top:4px;">' +
+                            '      <option value="">-- оберіть --</option>' +
+                            '      <option value="1П-23">1П-23</option>' +
+                            '      <option value="2П-23">2П-23</option>' +
+                            '      <option value="3П-23">3П-23</option>' +
+                            '    </select>' +
+                            '  </div>' +
+                            '</form>';
+                    },
+                    // Зв'язати події після рендеру вмісту
+                    onContentReady: function () {
+                        $('#fName, #fEmail').on('focus', function () {
+                            $(this).css('border-color', '#1976d2');
+                        }).on('blur', function () {
+                            $(this).css('border-color', '#ccc');
+                        });
+                        $('#fEmail').on('input', function () {
+                            var v = $(this).val();
+                            if (v.length > 0 && v.indexOf('@') === -1) {
+                                $('#fEmailErr').text('Не забудьте символ @').show();
+                            } else {
+                                $('#fEmailErr').hide();
+                            }
+                        });
+                    },
+                    buttons: {
+                        submit: {
+                            text: 'Зареєструватись',
+                            btnClass: 'btn-primary',
+                            action: function () {
+                                var name  = $('#fName').val().trim();
+                                var email = $('#fEmail').val().trim();
+                                var group = $('#fGroup').val();
+                                var ok = true;
+                                if (!name)  { $('#fNameErr').show(); ok = false; } else { $('#fNameErr').hide(); }
+                                if (!email || email.indexOf('@') === -1) { $('#fEmailErr').text('Введіть коректний email').show(); ok = false; } else { $('#fEmailErr').hide(); }
+                                if (!ok) return false;
+                                $('#formResult').html(
+                                    '<b style="color:green">✓ Форму відправлено!</b><br>' +
+                                    'Ім\'я: <b>' + name + '</b> | Email: <b>' + email + '</b> | Група: <b>' + (group||'не обрано') + '</b>'
+                                );
+                            }
+                        },
+                        cancel: { text: 'Скасувати' }
+                    }
+                });
+            });
+
+
+            // ===== $.fn.confirm() — пряма прив'язка до елемента =====
+
+            // Прив'язка до кнопки через .confirm()
+            $('.confirm-btn').confirm({
+                title: function () { return $(this).data('title'); },
+                content: function () { return $(this).data('content'); },
+                type: 'teal',
+                buttons: {
+                    yes: {
+                        text: 'Продовжити',
+                        btnClass: 'btn-success',
+                        action: function () {
+                            $('#fnConfirmResult')
+                                .text('Підтверджено! Елемент: "' + this.$target.text() + '"')
+                                .css('color', 'green');
+                        }
+                    },
+                    no: {
+                        text: 'Скасувати',
+                        action: function () {
+                            $('#fnConfirmResult').text('Скасовано').css('color', 'red');
+                        }
+                    }
+                }
+            });
+
+            // Прив'язка до посилання
+            $('a.confirm-link').confirm({
+                title: function () { return $(this).data('title'); },
+                content: function () { return $(this).data('content'); },
+                type: 'red',
+                buttons: {
+                    yes: {
+                        text: 'Так, перейти',
+                        btnClass: 'btn-danger',
+                        action: function () {
+                            $('#fnConfirmResult')
+                                .text('Перехід підтверджено! Посилання: "' + this.$target.text() + '"')
+                                .css('color', '#c62828');
+                        }
+                    },
+                    no: { text: 'Ні' }
+                }
+            });
+
+
+            // ===== this.$target — отримати елемент, на який натиснули =====
+            $('.target-btn').confirm({
+                title: 'Підтвердження',
+                content: function () {
+                    // this.$target — кнопка, на яку натиснули
+                    return 'Ви натиснули: <b>' + this.$target.data('name') + '</b>. Продовжити?';
+                },
+                buttons: {
+                    ok: {
+                        text: 'OK',
+                        btnClass: 'btn-success',
+                        action: function () {
+                            var name = this.$target.data('name');
+                            var color = this.$target.css('background-color');
+                            $('#targetResult').html(
+                                'this.$target.data("name") = <b>"' + name + '"</b><br>' +
+                                'this.$target.text() = <b>"' + this.$target.text() + '"</b>'
+                            );
+                        }
+                    },
+                    cancel: { text: 'Скасувати' }
+                }
+            });
+
+        });
+    </script>
+</body>
+</html>

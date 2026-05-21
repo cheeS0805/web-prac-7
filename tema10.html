@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тема 10 — Методи jQuery для роботи з атрибутами</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background: #f9f9f9; }
+        h1  { color: #1a237e; }
+        h2  { color: #283593; border-left: 4px solid #3949ab; padding-left: 10px; }
+        h3  { color: #37474f; margin-top: 16px; }
+
+        .section {
+            background: white; border: 1px solid #e0e0e0; padding: 20px;
+            margin: 20px 0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .info {
+            background: #e3f2fd; border-left: 3px solid #1976d2;
+            padding: 8px 12px; margin: 8px 0; border-radius: 0 5px 5px 0; font-size: 14px;
+        }
+        code {
+            background: #263238; color: #80cbc4; padding: 2px 7px;
+            border-radius: 3px; font-family: monospace; font-size: 13px;
+        }
+        pre {
+            background: #263238; color: #f8f8f2; padding: 14px;
+            border-radius: 6px; font-size: 13px; line-height: 1.6;
+            overflow-x: auto; margin: 10px 0;
+        }
+
+        .table-wrap { overflow-x: auto; margin: 10px 0; }
+        table { border-collapse: collapse; width: 100%; }
+        th { background: #1565c0; color: #fff; padding: 9px 13px; text-align: left; }
+        td { padding: 8px 13px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+        tr:nth-child(even) td { background: #f5f5f5; }
+
+        button {
+            background: #1565c0; color: white; border: none;
+            padding: 8px 18px; border-radius: 4px; cursor: pointer;
+            font-size: 14px; margin: 4px 4px 4px 0;
+        }
+        button:hover { background: #0d47a1; }
+        button.reset { background: #546e7a; }
+        button.reset:hover { background: #37474f; }
+
+        /* Gallery of demo images */
+        .gallery { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+        .gallery img {
+            width: 120px; height: 80px; border-radius: 6px;
+            border: 2px solid #e0e0e0; cursor: default;
+            display: block;
+        }
+        .gallery .img-label {
+            font-size: 11px; text-align: center; color: #757575; margin-top: 3px;
+        }
+        .gallery .img-wrap { display: inline-block; }
+
+        /* State table */
+        .state-table { margin-top: 12px; }
+        .state-table th { background: #37474f; }
+        .state-table td { font-family: monospace; font-size: 13px; }
+        .state-table td.empty { color: #bdbdbd; font-style: italic; }
+        .state-table td.filled { color: #2e7d32; font-weight: bold; }
+
+        .result {
+            background: #f5f5f5; border-left: 4px solid #f57c00;
+            padding: 10px 15px; margin: 10px 0; border-radius: 0 5px 5px 0;
+            font-family: monospace; font-size: 14px; white-space: pre-wrap;
+        }
+        .result.green  { border-color: #388e3c; background: #f1f8e9; }
+        .result.blue   { border-color: #1976d2; background: #e3f2fd; }
+    </style>
+</head>
+<body>
+
+<h1>Тема 10. Методи jQuery для виконання операцій над атрибутами</h1>
+
+<!-- ===== ТЕОРІЯ ===== -->
+<div class="section">
+    <h2>Теорія — Методи .attr() та .removeAttr()</h2>
+
+    <div class="table-wrap">
+        <table>
+            <tr>
+                <th>Синтаксис</th>
+                <th>Режим</th>
+                <th>Опис</th>
+            </tr>
+            <tr>
+                <td><code>$(sel).attr(name)</code></td>
+                <td>Getter</td>
+                <td>Повертає значення атрибута <code>name</code> першого елемента з набору</td>
+            </tr>
+            <tr>
+                <td><code>$(sel).attr(name, value)</code></td>
+                <td>Setter</td>
+                <td>Встановлює значення атрибута <code>name</code> для всіх елементів набору</td>
+            </tr>
+            <tr>
+                <td><code>$(sel).attr(name, function(i, val){})</code></td>
+                <td>Setter (fn)</td>
+                <td>Встановлює атрибут за допомогою функції. Параметри: <code>i</code> — індекс, <code>val</code> — поточне значення атрибута</td>
+            </tr>
+            <tr>
+                <td><code>$(sel).attr({ name: val, ... })</code></td>
+                <td>Setter (obj)</td>
+                <td>Встановлює кілька атрибутів одразу через об'єкт</td>
+            </tr>
+            <tr>
+                <td><code>$(sel).removeAttr(name)</code></td>
+                <td>Remove</td>
+                <td>Видаляє атрибут <code>name</code> з усіх елементів набору</td>
+            </tr>
+        </table>
+    </div>
+
+    <h3>Приклади .attr():</h3>
+    <pre>// Getter — отримати значення
+var src = $('img:first').attr('src');
+var alt = $('img:first').attr('alt');
+
+// Setter — встановити одне значення
+$('img:first').attr('title', 'Підказка для зображення');
+
+// Setter — встановити кілька атрибутів одразу
+$('img:first').attr({ alt: 'Ноутбук', title: 'Фото ноутбука' });
+
+// Setter з функцією — використати поточне значення
+$('img').attr('title', function(index, currentAlt) {
+    return $(this).attr('alt') + ' (зображення ' + (index + 1) + ')';
+});
+
+// Видалити атрибут
+$('img:first').removeAttr('title');</pre>
+</div>
+
+<div class="section">
+    <h2>Теорія — Метод .prop() та різниця між .attr() та .prop()</h2>
+
+    <p>Метод <code>.prop()</code> працює з <strong>DOM-властивостями</strong> (property), а <code>.attr()</code> — з <strong>HTML-атрибутами</strong> (attribute). Для більшості атрибутів різниця несуттєва, але для булевих вона принципова.</p>
+
+    <div class="table-wrap">
+        <table>
+            <tr><th>Синтаксис</th><th>Режим</th><th>Опис</th></tr>
+            <tr>
+                <td><code>$(sel).prop(name)</code></td>
+                <td>Getter</td>
+                <td>Повертає значення DOM-властивості (наприклад, <code>true</code>/<code>false</code> для checked)</td>
+            </tr>
+            <tr>
+                <td><code>$(sel).prop(name, true|false)</code></td>
+                <td>Setter</td>
+                <td>Якщо <code>true</code> — атрибут встановлюється, якщо <code>false</code> — видаляється</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <tr><th>Критерій</th><th>.attr()</th><th>.prop()</th></tr>
+            <tr>
+                <td>Що повертає для <code>checked</code></td>
+                <td><code>"checked"</code> або <code>undefined</code></td>
+                <td><code>true</code> або <code>false</code></td>
+            </tr>
+            <tr>
+                <td>Після зняття галочки</td>
+                <td>Все одно <code>"checked"</code> (початковий стан)</td>
+                <td>Повертає <code>false</code> (актуальний стан)</td>
+            </tr>
+            <tr>
+                <td>Призначення</td>
+                <td>HTML-атрибути: <code>href</code>, <code>src</code>, <code>alt</code>, <code>class</code></td>
+                <td>Булеві властивості: <code>checked</code>, <code>disabled</code>, <code>selected</code></td>
+            </tr>
+        </table>
+    </div>
+
+    <h3>Приклади .prop():</h3>
+    <pre>// Перевірити стан чекбокса
+var isChecked = $('input[type="checkbox"]').prop('checked'); // true / false
+
+// Вимкнути кнопку
+$('#myButton').prop('disabled', true);   // додає disabled
+
+// Увімкнути кнопку
+$('#myButton').prop('disabled', false);  // видаляє disabled
+
+// Відмітити чекбокс
+$('#myCheckbox').prop('checked', true);</pre>
+</div>
+
+<!-- ===== ЗОБРАЖЕННЯ ===== -->
+<div class="section">
+    <h2>Демонстраційні зображення для завдань 1–4</h2>
+    <p>На сторінці є 5 зображень. Кожне має атрибут <code>alt</code>, але жодне не має <code>title</code> (поки не виконано завдання).</p>
+
+    <div class="gallery" id="mainGallery">
+        <div class="img-wrap">
+            <img class="demo-img" id="img1" alt="Ноутбук" />
+            <div class="img-label">img#1 — alt: "Ноутбук"</div>
+        </div>
+        <div class="img-wrap">
+            <img class="demo-img" id="img2" alt="Смартфон" />
+            <div class="img-label">img#2 — alt: "Смартфон"</div>
+        </div>
+        <div class="img-wrap">
+            <img class="demo-img" id="img3" alt="Планшет" />
+            <div class="img-label">img#3 — alt: "Планшет"</div>
+        </div>
+        <div class="img-wrap">
+            <img class="demo-img" id="img4" alt="Монітор" />
+            <div class="img-label">img#4 — alt: "Монітор"</div>
+        </div>
+        <div class="img-wrap">
+            <img class="demo-img" id="img5" alt="Клавіатура" />
+            <div class="img-label">img#5 — alt: "Клавіатура"</div>
+        </div>
+    </div>
+
+    <h3>Поточний стан атрибутів:</h3>
+    <div class="table-wrap">
+        <table class="state-table" id="stateTable">
+            <thead>
+                <tr><th>#</th><th>id</th><th>alt</th><th>title</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <button id="btnRefresh" class="reset">Оновити таблицю стану</button>
+</div>
+
+<!-- ===== ЗАВДАННЯ 1 ===== -->
+<div class="section">
+    <h2>Завдання 1 — Отримати alt першого зображення і встановити його як title</h2>
+
+    <p>Отримати значення атрибута <code>alt</code> першого зображення на сторінці
+    і, використовуючи його, встановити значення атрибута <code>title</code>.</p>
+
+    <button id="btnTask1">Виконати завдання 1</button>
+
+    <div class="result blue" id="result1" style="display:none;margin-top:10px;"></div>
+
+    <pre>// Отримати alt першого зображення (getter)
+var altValue = $('img.demo-img:first').attr('alt');
+
+// Встановити title = alt (setter)
+$('img.demo-img:first').attr('title', altValue);
+
+console.log('alt   = ' + altValue);
+console.log('title = ' + $('img.demo-img:first').attr('title'));</pre>
+</div>
+
+<!-- ===== ЗАВДАННЯ 2 ===== -->
+<div class="section">
+    <h2>Завдання 2 — Додати атрибути alt і title першому зображенню</h2>
+
+    <p>Додати атрибути <code>alt</code> і <code>title</code> першому зображенню одночасно,
+    використовуючи об'єктний синтаксис <code>.attr({})</code>.</p>
+
+    <button id="btnTask2">Виконати завдання 2</button>
+
+    <div class="result green" id="result2" style="display:none;margin-top:10px;"></div>
+
+    <pre>// Встановити кілька атрибутів одразу через об'єкт
+$('img.demo-img:first').attr({
+    'alt'  : 'Зображення ноутбука',
+    'title': 'Сучасний ноутбук'
+});</pre>
+</div>
+
+<!-- ===== ЗАВДАННЯ 3 ===== -->
+<div class="section">
+    <h2>Завдання 3 — Встановити значення атрибутів alt і title для першого зображення</h2>
+
+    <p>Встановити значення атрибутів <code>alt</code> і <code>title</code> для першого зображення
+    за допомогою ланцюжка викликів <code>.attr()</code>.</p>
+
+    <button id="btnTask3">Виконати завдання 3</button>
+
+    <div class="result" id="result3" style="display:none;margin-top:10px;"></div>
+
+    <pre>// Ланцюговий виклик .attr() для встановлення alt і title окремо
+$('img.demo-img:first')
+    .attr('alt',   'Портативний комп\'ютер')
+    .attr('title', 'Зображення 1 — Портативний комп\'ютер');</pre>
+</div>
+
+<!-- ===== ЗАВДАННЯ 4 ===== -->
+<div class="section">
+    <h2>Завдання 4 — Встановити title = alt для кожного зображення</h2>
+
+    <p>Встановити значення атрибута <code>title</code>, використовуючи значення
+    атрибута <code>alt</code>, <strong>для кожного зображення</strong> на сторінці.
+    Застосовується функціональний синтаксис <code>.attr(name, fn)</code>.</p>
+
+    <button id="btnTask4">Виконати завдання 4</button>
+
+    <div class="result green" id="result4" style="display:none;margin-top:10px;"></div>
+
+    <pre>// Для кожного img встановити title на основі його поточного alt
+// Функція викликається для кожного елемента з індексом i та поточним значенням val
+$('img.demo-img').attr('title', function(i, val) {
+    return $(this).attr('alt');
+});</pre>
+</div>
+
+<!-- ===== SCRIPT ===== -->
+<script>
+$(document).ready(function () {
+
+    // ===== Генерація SVG-джерел для демо-зображень =====
+    var imgColors = ['#1565c0', '#388e3c', '#e65100', '#7b1fa2', '#c62828'];
+    var imgNums   = [1, 2, 3, 4, 5];
+
+    $('img.demo-img').each(function(i) {
+        var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="80">' +
+                  '<rect width="120" height="80" fill="' + imgColors[i] + '" rx="4"/>' +
+                  '<text x="60" y="48" text-anchor="middle" fill="white" ' +
+                  'font-size="28" font-family="Arial" font-weight="bold">' + imgNums[i] + '</text></svg>';
+        $(this).attr('src', 'data:image/svg+xml;base64,' + btoa(svg));
+    });
+
+
+    // ===== Функція оновлення таблиці стану =====
+    function refreshTable() {
+        var rows = '';
+        $('img.demo-img').each(function(i) {
+            var alt   = $(this).attr('alt');
+            var title = $(this).attr('title');
+            var tid   = $(this).attr('id');
+            rows += '<tr>' +
+                    '<td>' + (i + 1) + '</td>' +
+                    '<td>' + tid + '</td>' +
+                    '<td class="' + (alt   ? 'filled' : 'empty') + '">' + (alt   || '—') + '</td>' +
+                    '<td class="' + (title ? 'filled' : 'empty') + '">' + (title || '—') + '</td>' +
+                    '</tr>';
+        });
+        $('#stateTable tbody').html(rows);
+    }
+
+    refreshTable();
+    $('#btnRefresh').click(refreshTable);
+
+
+    // ===== ЗАВДАННЯ 1 =====
+    $('#btnTask1').click(function() {
+        var altValue = $('img.demo-img:first').attr('alt');
+        $('img.demo-img:first').attr('title', altValue);
+
+        $('#result1').text(
+            'Зображення #1:\n' +
+            '  alt   = "' + altValue + '"\n' +
+            '  title = "' + $('img.demo-img:first').attr('title') + '"'
+        ).show();
+
+        refreshTable();
+    });
+
+
+    // ===== ЗАВДАННЯ 2 =====
+    $('#btnTask2').click(function() {
+        $('img.demo-img:first').attr({
+            'alt'  : 'Зображення ноутбука',
+            'title': 'Сучасний ноутбук'
+        });
+
+        $('#result2').text(
+            'Зображення #1 після .attr({}):\n' +
+            '  alt   = "' + $('img.demo-img:first').attr('alt')   + '"\n' +
+            '  title = "' + $('img.demo-img:first').attr('title') + '"'
+        ).show();
+
+        refreshTable();
+    });
+
+
+    // ===== ЗАВДАННЯ 3 =====
+    $('#btnTask3').click(function() {
+        $('img.demo-img:first')
+            .attr('alt',   "Портативний комп'ютер")
+            .attr('title', "Зображення 1 — Портативний комп'ютер");
+
+        $('#result3').text(
+            'Зображення #1 після ланцюгового .attr():\n' +
+            '  alt   = "' + $('img.demo-img:first').attr('alt')   + '"\n' +
+            '  title = "' + $('img.demo-img:first').attr('title') + '"'
+        ).show();
+
+        refreshTable();
+    });
+
+
+    // ===== ЗАВДАННЯ 4 =====
+    $('#btnTask4').click(function() {
+        $('img.demo-img').attr('title', function(i) {
+            return $(this).attr('alt');
+        });
+
+        var log = 'Усі зображення — title встановлено рівним alt:\n';
+        $('img.demo-img').each(function(i) {
+            log += '  img#' + (i + 1) + ': title = "' + $(this).attr('title') + '"\n';
+        });
+
+        $('#result4').text(log.trim()).show();
+        refreshTable();
+    });
+
+});
+</script>
+</body>
+</html>

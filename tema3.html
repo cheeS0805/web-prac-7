@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тема 3 — jQuery Фільтри</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background: #f9f9f9; }
+        h1 { color: #1a237e; }
+        h2 { color: #283593; border-left: 4px solid #3949ab; padding-left: 10px; }
+        h3 { color: #37474f; margin-top: 16px; }
+        .section { background: white; border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0;
+                   border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        code { background: #263238; color: #80cbc4; padding: 2px 7px; border-radius: 3px;
+               font-family: monospace; font-size: 13px; }
+        pre  { background: #263238; color: #f8f8f2; padding: 14px; border-radius: 6px;
+               font-size: 13px; line-height: 1.6; overflow-x: auto; }
+        .info { background: #e3f2fd; border-left: 3px solid #1976d2; padding: 8px 12px;
+                margin: 8px 0; border-radius: 0 5px 5px 0; font-size: 14px; }
+
+        /* ===== Фільтри-псевдокласи ===== */
+        .spans-wrap span { display: inline-block; padding: 5px 10px; margin: 3px;
+                           border: 1px solid #90a4ae; border-radius: 4px; background: #eceff1; }
+        .list-wrap { list-style: none; padding: 0; }
+        .list-wrap li { padding: 6px 12px; margin: 3px 0; border: 1px solid #e0e0e0;
+                        border-radius: 4px; background: #fafafa; }
+
+        /* ===== .filter() ===== */
+        #filterDemo li { padding: 5px 10px; margin: 2px 0; border: 1px solid #e0e0e0; border-radius: 4px; }
+
+        /* ===== Форм-фільтри ===== */
+        .form-demo input, .form-demo select, .form-demo button { margin: 4px; padding: 5px 10px;
+            border: 1px solid #ccc; border-radius: 4px; }
+
+        /* ===== Завдання ===== */
+        #task-area { border: 2px dashed #90a4ae; padding: 16px; border-radius: 6px; background: #fafafa; }
+        #task-area ul { list-style: none; padding: 0; }
+        #task-area li { padding: 5px 12px; margin: 3px 0; border: 1px solid #e0e0e0; border-radius: 4px; }
+
+        /* ===== Таблиці ===== */
+        table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 14px; }
+        th { background: #3949ab; color: white; padding: 8px 12px; text-align: left; }
+        td { padding: 7px 12px; border-bottom: 1px solid #e0e0e0; }
+        tr:nth-child(even) td { background: #f5f5f5; }
+    </style>
+</head>
+<body>
+    <h1>Тема 3. Фільтри jQuery та метод .filter()</h1>
+
+    <!-- ===== ТЕОРІЯ: Таблиця базових фільтрів ===== -->
+    <div class="section">
+        <h2>Таблиця 3.1 — Базові фільтри jQuery</h2>
+        <p>Фільтри дозволяють відсортувати знайдені елементи за певним критерієм і використовуються як аргументи функції <code>$(selector)</code>.</p>
+        <table>
+            <tr><th>Фільтр</th><th>Опис</th><th>Приклад</th></tr>
+            <tr><td><code>:eq(n)</code></td><td>Вибирає n-й елемент вибірки (нумерація з нуля)</td><td><code>$('li:eq(2)')</code></td></tr>
+            <tr><td><code>:even</code></td><td>Вибирає елементи з парними номерами (0, 2, 4…)</td><td><code>$('li:even')</code></td></tr>
+            <tr><td><code>:odd</code></td><td>Вибирає елементи з непарними номерами (1, 3, 5…)</td><td><code>$('li:odd')</code></td></tr>
+            <tr><td><code>:first</code></td><td>Вибирає перший елемент вибірки</td><td><code>$('li:first')</code></td></tr>
+            <tr><td><code>:last</code></td><td>Вибирає останній елемент вибірки</td><td><code>$('li:last')</code></td></tr>
+            <tr><td><code>:gt(n)</code></td><td>Вибирає всі елементи з номером більшим за n</td><td><code>$('li:gt(3)')</code></td></tr>
+            <tr><td><code>:lt(n)</code></td><td>Вибирає всі елементи з номером меншим за n</td><td><code>$('li:lt(3)')</code></td></tr>
+            <tr><td><code>:header</code></td><td>Вибирає всі заголовки (h1, h2, h3…)</td><td><code>$(':header')</code></td></tr>
+            <tr><td><code>:not(selector)</code></td><td>Вибирає всі елементи, які НЕ відповідають selector</td><td><code>$('tr:not(.even)')</code></td></tr>
+        </table>
+
+        <h2>Таблиця 3.2 — Фільтри контенту jQuery</h2>
+        <table>
+            <tr><th>Фільтр</th><th>Опис</th><th>Приклад</th></tr>
+            <tr><td><code>:contains('текст')</code></td><td>Вибирає елементи, що містять заданий текст</td><td><code>$('p:contains("jQuery")')</code></td></tr>
+            <tr><td><code>:has('selector')</code></td><td>Вибирає елементи, що мають як мінімум один дочірній елемент, що відповідає selector</td><td><code>$('div:has(p)')</code></td></tr>
+            <tr><td><code>:empty</code></td><td>Вибирає елементи, що не мають дочірніх елементів і тексту (порожні)</td><td><code>$('td:empty')</code></td></tr>
+            <tr><td><code>:first-child</code></td><td>Вибирає всі елементи, які є першими дочірніми у свого батька</td><td><code>$('li:first-child')</code></td></tr>
+            <tr><td><code>:last-child</code></td><td>Вибирає всі елементи, які є останніми дочірніми у свого батька</td><td><code>$('li:last-child')</code></td></tr>
+            <tr><td><code>:nth-child(n)</code></td><td>Вибирає всі елементи, які є n-ми дочірніми (нумерація з 1)</td><td><code>$('li:nth-child(2)')</code></td></tr>
+            <tr><td><code>:nth-child(even)</code></td><td>Вибирає парні дочірні елементи (2-й, 4-й, 6-й…)</td><td><code>$('tr:nth-child(even)')</code></td></tr>
+            <tr><td><code>:nth-child(odd)</code></td><td>Вибирає непарні дочірні елементи (1-й, 3-й, 5-й…)</td><td><code>$('tr:nth-child(odd)')</code></td></tr>
+            <tr><td><code>:only-child</code></td><td>Вибирає елементи, які є єдиними дочірніми у свого батька</td><td><code>$('li:only-child')</code></td></tr>
+            <tr><td><code>:parent</code></td><td>Отримує всі елементи, які мають як мінімум один дочірній елемент або текст</td><td><code>$('td:parent')</code></td></tr>
+        </table>
+
+        <h2>Таблиця 3.3 — Фільтри для роботи з html-формою jQuery</h2>
+        <table>
+            <tr><th>Фільтр</th><th>Опис</th></tr>
+            <tr><td><code>:button</code></td><td>Отримує всі елементи button і елементи input з типом button</td></tr>
+            <tr><td><code>:checkbox</code></td><td>Отримує всі елементи <b>checkbox</b></td></tr>
+            <tr><td><code>:checked</code></td><td>Отримує всі елементи <b>checkbox та radio</b></td></tr>
+            <tr><td><code>:disabled</code></td><td>Отримує всі елементи, які знаходяться в неактивному стані</td></tr>
+            <tr><td><code>:enabled</code></td><td>Отримує всі елементи, які знаходяться в активному стані</td></tr>
+            <tr><td><code>:file</code></td><td>Отримує всі елементи <b>file (input type='file')</b></td></tr>
+            <tr><td><code>:input</code></td><td>Отримує всі елементи <b>input</b></td></tr>
+            <tr><td><code>:hidden</code></td><td>Отримує всі приховані елементи</td></tr>
+            <tr><td><code>:password</code></td><td>Отримує всі елементи <b>password</b></td></tr>
+            <tr><td><code>:radio</code></td><td>Отримує всі елементи <b>radio</b></td></tr>
+            <tr><td><code>:reset</code></td><td>Отримує всі елементи <b>reset</b></td></tr>
+            <tr><td><code>:selected</code></td><td>Отримує всі відмічені елементи <b>option</b></td></tr>
+            <tr><td><code>:submit</code></td><td>Отримує всі елементи <b>input</b> з типом <b>submit</b></td></tr>
+            <tr><td><code>:text</code></td><td>Отримує всі елементи <b>input</b> з типом <b>text</b></td></tr>
+            <tr><td><code>:visible</code></td><td>Отримує лише видимі елементи</td></tr>
+        </table>
+    </div>
+
+    <!-- ===== Демо: Базові фільтри-псевдокласи ===== -->
+    <div class="section">
+        <h2>Демонстрація базових фільтрів (span-елементи)</h2>
+        <p>Нижче span-елементи оформлені через псевдокласи-фільтри:</p>
+        <div class="spans-wrap" id="spans">
+            <span>Span 0</span>
+            <span>Span 1</span>
+            <span>Span 2</span>
+            <span>Span 3</span>
+            <span>Span 4</span>
+            <span>Span 5</span>
+            <span>Span 6</span>
+            <span>Span 7</span>
+        </div>
+        <div class="info" id="span-legend"></div>
+
+        <h3>Список li-елементів</h3>
+        <ul class="list-wrap" id="mylist">
+            <li>Яблуко</li>
+            <li>Банан</li>
+            <li>Вишня</li>
+            <li>Груша</li>
+            <li>Малина</li>
+            <li>Абрикос</li>
+        </ul>
+    </div>
+
+    <!-- ===== Демо: метод .filter() — 4 варіанти ===== -->
+    <div class="section">
+        <h2>Метод .filter() — 4 варіанти використання</h2>
+        <p>Метод <code>.filter()</code> проводить фільтрацію набору елементів за допомогою заданого параметру.</p>
+
+        <pre>// Варіант 1: filter(selector)
+$('li').filter(':odd').css('background', '#bbdefb');
+
+// Варіант 2: filter(function)
+$('li').filter(function(index) {
+    return index % 3 === 0;   // true → елемент потрапляє у результат
+}).css('font-weight', 'bold');
+
+// Варіант 3: filter(DOM-елемент)
+var el = document.querySelector('#list li:first-child');
+$('li').filter(el).css('border', '2px solid red');
+
+// Варіант 4: filter(jQuery-набір)
+var $set = $('#list li').eq(2);
+$('li').filter($set).css('color', 'purple');</pre>
+
+        <h3>Практичний приклад усіх 4 варіантів:</h3>
+        <ul id="filterDemo">
+            <li>Елемент 0</li>
+            <li>Елемент 1</li>
+            <li>Елемент 2</li>
+            <li>Елемент 3</li>
+            <li>Елемент 4</li>
+            <li>Елемент 5</li>
+            <li>Елемент 6</li>
+        </ul>
+        <div class="info" id="filter-legend"></div>
+    </div>
+
+    <!-- ===== Демо: Фільтри форми ===== -->
+    <div class="section">
+        <h2>Демонстрація фільтрів форми (:button, :checkbox, :disabled, :enabled, :checked)</h2>
+        <div class="form-demo" id="formArea">
+            <input type="text"     value="Текстове поле">
+            <input type="button"   value="Кнопка button">
+            <input type="submit"   value="Кнопка submit">
+            <input type="checkbox" id="chk1"> Чекбокс 1
+            <input type="checkbox" id="chk2" checked> Чекбокс 2 (checked)
+            <input type="radio"    name="r" value="1"> Радіо 1
+            <input type="radio"    name="r" value="2" checked> Радіо 2 (checked)
+            <input type="text"     value="Заблоковано" disabled>
+            <button>Кнопка button-тег</button>
+        </div>
+        <div class="info" id="form-legend"></div>
+    </div>
+
+    <!-- ===== ЗАВДАННЯ (з методички, Рис. 3.5/3.6) ===== -->
+    <div class="section">
+        <h2>Завдання — використання методу .filter()</h2>
+        <p>Початковий код сторінки. Використовуючи метод <code>.filter()</code>, необхідно:</p>
+        <ol>
+            <li>Виділити текст між тегами <code>&lt;span&gt;&lt;/span&gt;</code> — <b>червоний колір на жовтому фоні</b></li>
+            <li>Текст між тегами <code>&lt;span id="first"&gt;&lt;/span&gt;</code> — <b>18px та підкреслений</b></li>
+            <li>Текст між тегами <code>&lt;span id="second"&gt;&lt;/span&gt;</code> — <b>16px та напівжирний</b></li>
+            <li>Текст між тегами <code>&lt;span id="city"&gt;&lt;/span&gt;</code> — <b>20px та нахилений</b></li>
+            <li>В першому списку <code>id="list"</code> — виділити всі <b>парні</b> записи; перший і останній пункт — жирним шрифтом</li>
+            <li>В другому списку <code>id="two"</code> — виділити всі <b>непарні</b> записи; перший і останній пункт — жирним шрифтом</li>
+        </ol>
+
+        <div id="task-area">
+
+            <!-- HTML-код для завдань 1-4: span-елементи -->
+            <p style="font-size:15px; line-height:2.4;">
+                Загальний <span>текст між звичайним span</span> на сторінці.
+                Назва закладу: <span id="first">Черкаський державний бізнес-коледж</span>.
+                Тип закладу: <span id="second">вищий навчальний заклад</span>.
+                Місто: <span id="city">Черкаси</span>.
+            </p>
+
+            <!-- Пояснювальна таблиця (без повторних ID) -->
+            <table style="width:100%; border-collapse:collapse; margin:10px 0;">
+                <tr style="background:#f5f5f5;">
+                    <td style="padding:8px; width:130px; color:#666; font-size:13px;">Завдання 1</td>
+                    <td style="padding:8px;">Всі <code>&lt;span&gt;</code> → <code>.filter('span')</code> → червоний на жовтому</td>
+                </tr>
+                <tr>
+                    <td style="padding:8px; color:#666; font-size:13px;">Завдання 2</td>
+                    <td style="padding:8px;"><code>&lt;span id="first"&gt;</code> → <code>.filter('#first')</code> → 18px, підкреслений</td>
+                </tr>
+                <tr style="background:#f5f5f5;">
+                    <td style="padding:8px; color:#666; font-size:13px;">Завдання 3</td>
+                    <td style="padding:8px;"><code>&lt;span id="second"&gt;</code> → <code>.filter('#second')</code> → 16px, напівжирний</td>
+                </tr>
+                <tr>
+                    <td style="padding:8px; color:#666; font-size:13px;">Завдання 4</td>
+                    <td style="padding:8px;"><code>&lt;span id="city"&gt;</code> → <code>.filter('#city')</code> → 20px, нахилений</td>
+                </tr>
+            </table>
+
+            <h3>Список 1 id="list" (парні — підсвічуються зеленим; перший і останній — жирні):</h3>
+            <ul id="list">
+                <li>Перший елемент</li>
+                <li>Другий елемент</li>
+                <li>Третій елемент</li>
+                <li>Четвертий елемент</li>
+                <li>П'ятий елемент</li>
+                <li>Шостий елемент</li>
+            </ul>
+
+            <h3>Список 2 id="two" (непарні — підсвічуються блакитним; перший і останній — жирні):</h3>
+            <ul id="two">
+                <li>Елемент A</li>
+                <li>Елемент B</li>
+                <li>Елемент C</li>
+                <li>Елемент D</li>
+                <li>Елемент E</li>
+                <li>Елемент F</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+
+            // ===== ДЕМО: Базові фільтри для span =====
+
+            // :eq(3) — четвертий span (індекс 3)
+            $('#spans span:eq(3)').css({ 'background-color': '#ffeb3b', 'font-weight': 'bold' });
+
+            // :even — парні (0, 2, 4, 6) → зелений фон
+            $('#spans span:even').css('background-color', '#c8e6c9');
+
+            // :odd — непарні (1, 3, 5, 7) → блакитний фон
+            $('#spans span:odd').css('background-color', '#bbdefb');
+
+            // :first → червона рамка
+            $('#spans span:first').css({ 'border': '3px solid red', 'color': 'red' });
+
+            // :last → синя рамка
+            $('#spans span:last').css({ 'border': '3px solid blue', 'color': 'blue' });
+
+            // :gt(5) — після індексу 5 → курсив
+            $('#spans span:gt(5)').css('font-style', 'italic');
+
+            // :lt(2) — до індексу 2 → збільшений шрифт
+            $('#spans span:lt(2)').css('font-size', '16px');
+
+            $('#span-legend').html(
+                '<b>Пояснення:</b> ' +
+                '<span style="background:#c8e6c9">:even (зелені)</span> · ' +
+                '<span style="background:#bbdefb">:odd (блакитні)</span> · ' +
+                '<span style="background:#ffeb3b">:eq(3) (жовтий)</span> · ' +
+                '<span style="color:red">:first (червона рамка)</span> · ' +
+                '<span style="color:blue">:last (синя рамка)</span> · ' +
+                '<i>:gt(5) (курсив)</i> · ' +
+                '<b>:lt(2) (більший шрифт)</b>'
+            );
+
+            // ===== ДЕМО: Фільтри для li-списку =====
+
+            // :even → зелена ліва рамка
+            $('#mylist li:even').css('border-left', '4px solid green');
+
+            // :odd → помаранчева ліва рамка
+            $('#mylist li:odd').css('border-left', '4px solid orange');
+
+            // :contains — елементи, що містять "а"
+            $('#mylist li:contains("а")').css('color', 'darkgreen');
+
+            // :first і :last → фонові кольори
+            $('#mylist li:first').css('background-color', '#fff9c4');
+            $('#mylist li:last').css('background-color', '#fce4ec');
+
+            // :not(:first):not(:last) → opacity
+            $('#mylist li:gt(0):lt(5)').css('opacity', '0.85');
+
+
+            // ===== ДЕМО: Метод .filter() — 4 варіанти =====
+
+            // Варіант 1: filter(selector) — непарні → блакитний
+            $('#filterDemo li').filter(':odd').css('background-color', '#e3f2fd');
+
+            // Варіант 2: filter(function) — кожен третій (index % 3 === 0) → жирний
+            $('#filterDemo li').filter(function (index) {
+                return index % 3 === 0;
+            }).css('font-weight', 'bold');
+
+            // Варіант 3: filter(DOM-елемент) — перший через querySelectorAll → червона рамка
+            var domEl = document.querySelectorAll('#filterDemo li')[0];
+            $('#filterDemo li').filter(domEl).css('border', '2px solid red');
+
+            // Варіант 4: filter(jQuery-набір) — 4-й елемент (index=3) → фіолетовий
+            var $jqSet = $('#filterDemo li').eq(3);
+            $('#filterDemo li').filter($jqSet).css('color', 'purple');
+
+            $('#filter-legend').html(
+                '<b>Варіанти .filter():</b> ' +
+                '<span style="background:#e3f2fd">:odd — selector</span> · ' +
+                '<b>index%3==0 — function</b> · ' +
+                '<span style="border:2px solid red;padding:2px">1-й — DOM-element</span> · ' +
+                '<span style="color:purple">4-й — jQuery-набір</span>'
+            );
+
+
+            // ===== ДЕМО: Фільтри форми =====
+
+            // :button → помаранчевий фон
+            $('#formArea :button').css('background-color', '#ffe082');
+
+            // :disabled → сірий фон
+            $('#formArea :disabled').css('background-color', '#e0e0e0');
+
+            // :enabled:text → зелена рамка для активних текстових полів
+            $('#formArea :enabled:text').css('border', '2px solid #4caf50');
+
+            // :checked → рожевий фон у батьківського елемента
+            $('#formArea :checked').parent().css('color', '#e91e63');
+
+            // Підрахунки
+            var btnCount  = $('#formArea :button').length;
+            var chkCount  = $('#formArea :checkbox').length;
+            var disCount  = $('#formArea :disabled').length;
+            var chkdCount = $('#formArea :checked').length;
+            $('#form-legend').html(
+                'Знайдено: ' +
+                '<b>:button</b> = ' + btnCount + ' · ' +
+                '<b>:checkbox</b> = ' + chkCount + ' · ' +
+                '<b>:disabled</b> = ' + disCount + ' · ' +
+                '<b>:checked</b> = ' + chkdCount
+            );
+
+
+            // ===== ЗАВДАННЯ (методичка) — використовуємо .filter() =====
+
+            // 1. всі <span> → червоний колір на жовтому фоні
+            $('#task-area span').css({ 'color': 'red', 'background-color': 'yellow' });
+
+            // 2. <span id="first"> → 18px та підкреслений
+            $('#task-area span').filter('#first').css({ 'font-size': '18px', 'text-decoration': 'underline' });
+
+            // 3. <span id="second"> → 16px та напівжирний
+            $('#task-area span').filter('#second').css({ 'font-size': '16px', 'font-weight': 'bold' });
+
+            // 4. <span id="city"> → 20px та нахилений
+            $('#task-area span').filter('#city').css({ 'font-size': '20px', 'font-style': 'italic' });
+
+            // 5. Перший список id="list": парні → зелений фон; перший і останній → жирний
+            $('#list li').filter(':even').css('background-color', '#c8e6c9');
+            $('#list li').filter(':first').css('font-weight', 'bold');
+            $('#list li').filter(':last').css('font-weight', 'bold');
+
+            // 6. Другий список id="two": непарні → блакитний фон; перший і останній → жирний
+            $('#two li').filter(':odd').css('background-color', '#bbdefb');
+            $('#two li').filter(':first').css('font-weight', 'bold');
+            $('#two li').filter(':last').css('font-weight', 'bold');
+
+        });
+    </script>
+</body>
+</html>

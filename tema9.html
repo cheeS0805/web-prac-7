@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тема 9 — Зміна вмісту елементів за допомогою jQuery</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background: #f9f9f9; }
+        h1  { color: #1a237e; }
+        h2  { color: #283593; border-left: 4px solid #3949ab; padding-left: 10px; }
+        h3  { color: #37474f; margin-top: 16px; }
+
+        .section {
+            background: white; border: 1px solid #e0e0e0; padding: 20px;
+            margin: 20px 0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .info {
+            background: #e3f2fd; border-left: 3px solid #1976d2;
+            padding: 8px 12px; margin: 8px 0; border-radius: 0 5px 5px 0; font-size: 14px;
+        }
+        .warn {
+            background: #fff3e0; border-left: 3px solid #f57c00;
+            padding: 8px 12px; margin: 8px 0; border-radius: 0 5px 5px 0; font-size: 14px;
+        }
+        code {
+            background: #263238; color: #80cbc4; padding: 2px 7px;
+            border-radius: 3px; font-family: monospace; font-size: 13px;
+        }
+        pre {
+            background: #263238; color: #f8f8f2; padding: 14px;
+            border-radius: 6px; font-size: 13px; line-height: 1.6;
+            overflow-x: auto; margin: 10px 0;
+        }
+
+        .table-wrap { overflow-x: auto; margin: 10px 0; }
+        table { border-collapse: collapse; width: 100%; }
+        th { background: #1565c0; color: #fff; padding: 9px 13px; text-align: left; }
+        td { padding: 8px 13px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+        tr:nth-child(even) td { background: #f5f5f5; }
+
+        .result {
+            background: #f5f5f5; border-left: 4px solid #f57c00;
+            padding: 10px 15px; margin: 10px 0; border-radius: 0 5px 5px 0;
+            font-family: monospace; font-size: 14px; white-space: pre-wrap; min-height: 24px;
+        }
+        .result.green  { border-color: #388e3c; background: #f1f8e9; }
+        .result.blue   { border-color: #1976d2; background: #e3f2fd; }
+        .result.purple { border-color: #7b1fa2; background: #f3e5f5; }
+
+        input[type="button"], button {
+            background: #1565c0; color: white; border: none;
+            padding: 8px 16px; border-radius: 4px; cursor: pointer;
+            font-size: 14px; margin: 4px 4px 4px 0;
+        }
+        input[type="button"]:hover, button:hover { background: #0d47a1; }
+
+        /* Task 1 paragraphs */
+        #par1, #par2 {
+            background: #fff3e0; border: 1px solid #ffb300;
+            padding: 12px 16px; border-radius: 6px; margin: 8px 0;
+            font-size: 15px; line-height: 1.7;
+        }
+        #par2 { background: #e8f5e9; border-color: #66bb6a; }
+
+        /* Task 2 */
+        #task2-area p  { font-size: 16px; margin: 6px 0; color: #333; }
+        #task2-area span {
+            display: inline-block; background: #e3f2fd; border: 1px solid #1976d2;
+            padding: 6px 14px; border-radius: 4px; margin-top: 8px; font-size: 15px;
+        }
+
+        /* Task 3 */
+        .firstTest input[type="text"] {
+            border: 1px solid #90a4ae; padding: 6px 10px; border-radius: 4px;
+            font-size: 14px; margin: 4px 4px 4px 0; width: 180px;
+        }
+        .secondTest { margin: 8px 0; }
+        .secondTest label { margin-right: 16px; font-size: 14px; cursor: pointer; }
+        select {
+            border: 1px solid #90a4ae; padding: 4px 8px; border-radius: 4px;
+            font-size: 14px; min-height: 90px; margin-top: 8px;
+        }
+        #task3-result { margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<h1>Тема 9. Зміна вмісту елементів за допомогою jQuery. Додавання вмісту на сторінку</h1>
+
+<!-- ===== ТЕОРІЯ ===== -->
+<div class="section">
+    <h2>Теорія — Методи .html(), .text(), .val()</h2>
+
+    <p>jQuery надає три основні методи для роботи з вмістом елементів:</p>
+
+    <div class="table-wrap">
+        <table>
+            <tr>
+                <th>Метод</th>
+                <th>Синтаксис (getter)</th>
+                <th>Синтаксис (setter)</th>
+                <th>Призначення</th>
+            </tr>
+            <tr>
+                <td><strong>.html()</strong></td>
+                <td><code>$(sel).html()</code></td>
+                <td><code>$(sel).html(str)</code></td>
+                <td>Отримати або встановити HTML-вміст елемента (включно з тегами)</td>
+            </tr>
+            <tr>
+                <td><strong>.text()</strong></td>
+                <td><code>$(sel).text()</code></td>
+                <td><code>$(sel).text(str)</code></td>
+                <td>Отримати або встановити текстовий вміст елемента (без тегів, HTML-теги екрануються)</td>
+            </tr>
+            <tr>
+                <td><strong>.val()</strong></td>
+                <td><code>$(sel).val()</code></td>
+                <td><code>$(sel).val(str|array)</code></td>
+                <td>Отримати або встановити значення атрибута <code>value</code> елементів форми</td>
+            </tr>
+        </table>
+    </div>
+
+    <h3>Порівняння .html() та .text():</h3>
+    <div class="table-wrap">
+        <table>
+            <tr><th>Критерій</th><th>.html()</th><th>.text()</th></tr>
+            <tr>
+                <td>HTML-теги у вмісті</td>
+                <td>Вставляються як HTML (інтерпретуються браузером)</td>
+                <td>Вставляються як текст (відображаються як &lt;b&gt;, &amp; тощо)</td>
+            </tr>
+            <tr>
+                <td>Отримання значення</td>
+                <td>Повертає HTML разом з тегами</td>
+                <td>Повертає лише текстовий вміст (без тегів)</td>
+            </tr>
+            <tr>
+                <td>Безпека</td>
+                <td>Небезпечно для введення користувача (XSS)</td>
+                <td>Безпечно — вміст екранується</td>
+            </tr>
+            <tr>
+                <td>Застосування</td>
+                <td>Зміна структури DOM, вставка розмітки</td>
+                <td>Читання/запис тексту без вставки HTML</td>
+            </tr>
+        </table>
+    </div>
+
+    <h3>Метод .val() — типи елементів:</h3>
+    <div class="table-wrap">
+        <table>
+            <tr><th>Елемент</th><th>Getter</th><th>Setter</th></tr>
+            <tr>
+                <td><code>&lt;input type="text"&gt;</code></td>
+                <td>Повертає поточне значення поля</td>
+                <td>Встановлює значення поля</td>
+            </tr>
+            <tr>
+                <td><code>&lt;input type="checkbox"&gt;</code></td>
+                <td>Повертає значення атрибута <code>value</code></td>
+                <td>Якщо передати масив — відмічає чекбокси, чиї <code>value</code> входять до масиву</td>
+            </tr>
+            <tr>
+                <td><code>&lt;input type="radio"&gt;</code></td>
+                <td>Повертає значення відміченого radio</td>
+                <td>Встановлює відмічений radio за значенням</td>
+            </tr>
+            <tr>
+                <td><code>&lt;select&gt;</code></td>
+                <td>Повертає вибране значення (або масив для multiple)</td>
+                <td>Рядок — вибирає один варіант; масив — вибирає кілька (multiple)</td>
+            </tr>
+            <tr>
+                <td><code>&lt;textarea&gt;</code></td>
+                <td>Повертає вміст текстового поля</td>
+                <td>Встановлює вміст текстового поля</td>
+            </tr>
+        </table>
+    </div>
+
+    <h3>Приклади:</h3>
+    <pre>// .html() — getter та setter
+var content = $('#myDiv').html();           // отримати HTML-вміст
+$('#myDiv').html('&lt;b&gt;Новий вміст&lt;/b&gt;');    // встановити HTML
+
+// .text() — getter та setter
+var text = $('p').text();                  // отримати текст усіх p
+$('p').text('Новий текст');               // встановити текст усіх p
+
+// .val() — getter та setter
+var inputVal = $('input').val();           // отримати значення
+$('input').val('Нове значення');          // встановити значення
+$('select').val(['Option1', 'Option3']);   // вибрати кілька (multiple)
+$('[name="cb"]').val(['val1', 'val2']);    // відмітити чекбокси</pre>
+</div>
+
+<!-- ===== ЗАВДАННЯ 1 ===== -->
+<div class="section">
+    <h2>Завдання 1 — Метод .html()</h2>
+
+    <p>Використовуючи метод <code>.html()</code>, змінити текст абзаців та дізнатися їх поточний вміст.</p>
+
+    <p id="par1">Я перший абзац.</p>
+    <p id="par2">Я другий абзац.</p>
+
+    <input id="but1" type="button" value="Змінити текст першого абзацу" />
+    <input id="but2" type="button" value="Змінити текст другого абзацу" />
+    <br/><br/>
+    <input id="but3" type="button" value="Дізнатися текст першого абзацу" />
+    <input id="but4" type="button" value="Дізнатися текст другого абзацу" />
+
+    <div class="result blue" id="task1result" style="margin-top:10px; display:none;"></div>
+
+    <pre>// Зміна вмісту через .html()
+$('#but1').click(function() {
+    $('#par1').html('jQuery — це JavaScript бібліотека, що значно спрощує написання коду.');
+});
+
+$('#but2').click(function() {
+    $('#par2').html('jQuery значно полегшує взаємодію з DOM.');
+});
+
+// Читання вмісту через .html()
+$('#but3').click(function() {
+    $('#task1result').text($('#par1').html()).show();
+});
+
+$('#but4').click(function() {
+    $('#task1result').text($('#par2').html()).show();
+});</pre>
+</div>
+
+<!-- ===== ЗАВДАННЯ 2 ===== -->
+<div class="section">
+    <h2>Завдання 2 — Метод .text()</h2>
+
+    <p>Використовуючи метод <code>.text()</code>, змінити всі «Yes» на «No»,
+    а в тег <code>&lt;span&gt;&lt;/span&gt;</code> вставити «Так / Ні».</p>
+
+    <div id="task2-area">
+        <button id="btn2">Клік</button>
+        <p>Yes</p>
+        <p>Yes</p>
+        <p>Yes</p>
+        <span></span>
+    </div>
+
+    <pre>$('#btn2').click(function() {
+    // змінюємо текст усіх &lt;p&gt; з 'Yes' на 'No'
+    $('#task2-area p').text('No');
+
+    // вставляємо текст в &lt;span&gt;
+    $('#task2-area span').text('Так / Ні');
+});</pre>
+</div>
+
+<!-- ===== ЗАВДАННЯ 3 ===== -->
+<div class="section">
+    <h2>Завдання 3 — Метод .val()</h2>
+
+    <p>Використовуючи метод <code>.val()</code>, при натисканні на кнопку:</p>
+    <ul style="margin:8px 0 12px 22px; line-height:1.8;">
+        <li>змінюємо значення текстових полів <code>&lt;input&gt;</code> у <code>div.firstTest</code></li>
+        <li>відмічаємо необхідні елементи <code>&lt;input&gt;</code> у <code>div.secondTest</code></li>
+        <li>вибираємо необхідні елементи списку <code>&lt;select&gt;</code></li>
+    </ul>
+
+    <div id="task3-area">
+        <button id="btn3">Клік</button>
+
+        <div class="firstTest" style="margin-top:12px;">
+            <input type="text" value="firstELement">
+            <input type="text" value="secondELement"><br><br>
+        </div>
+
+        <div class="secondTest">
+            <label><input type="checkbox" name="checkboxname" value="check1"> check1</label>
+            <label><input type="checkbox" name="checkboxname" value="check2"> check2</label>
+            <label><input type="radio" name="radio" value="radio1"> radio1</label>
+            <label><input type="radio" name="radio" value="radio2"> radio2</label>
+        </div>
+
+        <select multiple>
+            <option selected>Option1</option>
+            <option>Option2</option>
+            <option selected>Option3</option>
+            <option>Option4</option>
+        </select>
+    </div>
+
+    <div class="result green" id="task3result" style="margin-top:10px; display:none;"></div>
+
+    <pre>$('#btn3').click(function() {
+    // Змінюємо значення текстових полів у .firstTest
+    var inputs = $('#task3-area .firstTest input[type="text"]');
+    inputs.eq(0).val('changedFirst');
+    inputs.eq(1).val('changedSecond');
+
+    // Відмічаємо чекбокси у .secondTest (масив значень)
+    $('[name="checkboxname"]').val(['check1', 'check2']);
+
+    // Вибираємо radio у .secondTest
+    $('[name="radio"]').val(['radio2']);
+
+    // Вибираємо елементи списку &lt;select&gt;
+    $('#task3-area select').val(['Option2', 'Option4']);
+
+    // Виводимо результат
+    var res = 'input[0].val = "' + inputs.eq(0).val() + '"\n';
+    res    += 'input[1].val = "' + inputs.eq(1).val() + '"\n';
+    res    += 'radio.val = "'   + $('[name="radio"]:checked').val() + '"\n';
+    res    += 'select.val = '   + JSON.stringify($('#task3-area select').val());
+    $('#task3result').text(res).show();
+});</pre>
+</div>
+
+<!-- ===== SCRIPT ===== -->
+<script>
+$(document).ready(function () {
+
+    // ===== ЗАВДАННЯ 1: .html() =====
+
+    $('#but1').click(function() {
+        $('#par1').html('jQuery — це JavaScript бібліотека, що значно спрощує написання коду.');
+    });
+
+    $('#but2').click(function() {
+        $('#par2').html('jQuery значно полегшує взаємодію з DOM.');
+    });
+
+    $('#but3').click(function() {
+        $('#task1result').text('Вміст #par1: ' + $('#par1').html()).show();
+    });
+
+    $('#but4').click(function() {
+        $('#task1result').text('Вміст #par2: ' + $('#par2').html()).show();
+    });
+
+
+    // ===== ЗАВДАННЯ 2: .text() =====
+
+    $('#btn2').click(function() {
+        $('#task2-area p').text('No');
+        $('#task2-area span').text('Так / Ні');
+    });
+
+
+    // ===== ЗАВДАННЯ 3: .val() =====
+
+    $('#btn3').click(function() {
+        // текстові поля у .firstTest
+        var inputs = $('#task3-area .firstTest input[type="text"]');
+        inputs.eq(0).val('changedFirst');
+        inputs.eq(1).val('changedSecond');
+
+        // чекбокси у .secondTest — масив значень відмічає відповідні чекбокси
+        $('[name="checkboxname"]').val(['check1', 'check2']);
+
+        // radio у .secondTest
+        $('[name="radio"]').val(['radio2']);
+
+        // елементи списку select (multiple)
+        $('#task3-area select').val(['Option2', 'Option4']);
+
+        // результат
+        var checkedCb = [];
+        $('[name="checkboxname"]:checked').each(function() {
+            checkedCb.push($(this).val());
+        });
+        var res = 'input[0].val  = "' + inputs.eq(0).val() + '"\n';
+        res    += 'input[1].val  = "' + inputs.eq(1).val() + '"\n';
+        res    += 'checkbox      = ['  + checkedCb.join(', ') + ']\n';
+        res    += 'radio.val     = "' + $('[name="radio"]:checked').val() + '"\n';
+        res    += 'select.val    = '  + JSON.stringify($('#task3-area select').val());
+        $('#task3result').text(res).show();
+    });
+
+});
+</script>
+</body>
+</html>
